@@ -1,0 +1,21 @@
+{
+  "name": "webapp-blueprint-marketplace",
+  "owner": {
+    "name": "seriouscoderone"
+  },
+  "metadata": {
+    "description": "Enterprise web application specification pipeline — 17-step design process producing a complete /spec folder ready for code generation."
+  },
+  "plugins": [
+    {
+      "name": "webapp-blueprint",
+      "source": "./",
+      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 17 sequential design steps — from domain discovery, role matrices, and design systems through BDD features, page specs, component contracts, API definitions, and authorization policies. Produces a complete /spec folder ready for code generation.",
+      "version": "1.0.0",
+      "strict": false,
+      "skills": [
+        "./"
+      ]
+    }
+  ]
+}
