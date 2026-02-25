@@ -191,10 +191,19 @@ Weighted average of the three scores:
 Formula: `(completeness * 0.40) + (consistency * 0.35) + (coverage * 0.25)`
 
 **Thresholds:**
-- **90-100**: Ready for generation — proceed to Step 17
-- **75-89**: Minor gaps — fix issues before generation for best results
-- **50-74**: Significant gaps — several steps likely need revisiting
-- **Below 50**: Incomplete — major specification work remains
+- **≥ 80**: Ready — proceed to Step 17 (Generation Briefs) and Step 18 (Seed Data)
+- **65–79**: Conditional — user may proceed with acknowledged gaps; list all gaps explicitly
+- **< 65**: Blocked — do not proceed; surface the top 5 gaps and require remediation first
+
+---
+
+## Gate: Proceeding to Steps 17 and 18
+
+The overall score determines whether the spec is ready to proceed:
+
+- **Score ≥ 80: PASS** — proceed to Step 17 (Generation Briefs) and/or Step 18 (Seed Data Specification)
+- **Score 65–79: CONDITIONAL** — user may proceed but Claude must explicitly list every known gap and confirm the user accepts the risk of incomplete generation output
+- **Score < 65: BLOCK** — do not proceed to Step 17 or Step 18; surface the top 5 highest-impact gaps and require the user to remediate them before re-running validation
 
 ## Output Specification
 

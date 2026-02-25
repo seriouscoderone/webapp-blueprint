@@ -1,6 +1,6 @@
 # Webapp Blueprint
 
-A Claude Code skill that implements a **17-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, component contracts, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation.
+A Claude Code skill that implements an **18-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, component contracts, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation.
 
 ## Installation
 
@@ -55,7 +55,7 @@ The pipeline is organized into 4 tiers:
 | 1 | 1–5 | Suite-wide (run once) | Domain model, roles, design system, navigation, API conventions |
 | 2 | 6–8 | Per-app (run once each) | App archetype, domain refinement, role refinement |
 | 3 | 9–15 | Per-app (detailed) | BDD features, IA, pages, components, state, APIs, authorization |
-| 4 | 16–17 | Per-app (final) | Spec validation, generation briefs |
+| 4 | 16–18 | Per-app (final) | Spec validation, generation briefs, seed data |
 
 Supports 6 app archetypes: CRUD Manager, Dashboard/Analytics, Workflow Engine, Content Platform, Communication Hub, and Configuration/Admin.
 
@@ -82,6 +82,7 @@ spec/
 │   ├── state-interaction.md
 │   ├── api-contracts.md
 │   ├── authorization.md
+│   ├── seed-data.md                # Tier 4 (Step 18)
 │   └── generation-briefs/          # Tier 4
 │       ├── _build-order.md
 │       └── {page_name}-brief.md

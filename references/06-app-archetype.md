@@ -115,6 +115,19 @@ After selecting archetype(s), present the default page patterns, components, and
 - "Here are the defaults for [archetype]. Do any of these not apply to your app?"
 - "Are there additional patterns or components you already know you'll need beyond these defaults?"
 
+### Tech Stack Declaration
+Ask the following questions to lock in the implementation technology. This declaration is stored in `archetype.md` and read by Steps 3, 11, 12, and 17 to produce framework-appropriate output.
+
+- **Language**: TypeScript or JavaScript?
+- **Framework**: React / Vue / Angular / SvelteKit / Next.js / Nuxt / other (specify)
+- **Styling**: Tailwind CSS / CSS Modules / Styled Components / Material UI / Shadcn/ui / Chakra UI / other (specify)
+- **State management**: TanStack Query + Context / Zustand / Redux Toolkit / Jotai / Pinia / other (specify)
+- **Routing**: Next.js App Router / React Router / TanStack Router / Vue Router / other (specify)
+- **Test runner**: Vitest (unit) + Playwright (E2E) / Jest (unit) + Cypress (E2E) / other (specify)
+- **Package manager**: npm / yarn / pnpm / bun
+
+If the user is unsure about any choice, offer the most common option for their framework as a default (e.g., Next.js App Router for Next.js, TanStack Query for React, Vitest + Playwright for Vite-based stacks).
+
 ### Success Criteria
 - "What does success look like for this app? What are 2-3 key outcomes users should achieve?"
 
@@ -158,6 +171,15 @@ After selecting archetype(s), present the default page patterns, components, and
 2. {Goal 2}
 3. {Goal 3}
 
+## Tech Stack
+- **Language**: {TypeScript / JavaScript}
+- **Framework**: {framework name and version if known}
+- **Styling**: {styling approach}
+- **State Management**: {state management library/approach}
+- **Routing**: {routing library/approach}
+- **Test Runner**: {unit test runner} (unit) + {E2E test runner} (E2E)
+- **Package Manager**: {npm / yarn / pnpm / bun}
+
 ## Overrides & Customizations
 {Any archetype defaults the user wants to change, add, or remove}
 
@@ -173,4 +195,5 @@ After selecting archetype(s), present the default page patterns, components, and
 - [ ] Target user roles identified from global role list
 - [ ] App-specific goals defined (at least 2)
 - [ ] Relationship to other suite apps documented (if other apps exist)
+- [ ] Tech stack declared: language, framework, styling, state management, routing, test runner, package manager
 - [ ] Output file written to `./spec/apps/{app_name}/archetype.md`
