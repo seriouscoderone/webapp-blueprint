@@ -130,6 +130,33 @@ claude skill add --source gh:seriouscoderone/webapp-blueprint/skills/test   # te
 
 **Typical workflow:** run `webapp-blueprint` to produce the spec → run `webapp-blueprint-build` in your project session to build and deploy → run `webapp-blueprint-test` in a separate session to execute BDD scenarios → build skill reads results and fixes failures → repeat until green.
 
+### Running the test agent as a separate instance
+
+`webapp-blueprint-test` must run in a completely isolated Claude Code session — it needs its own tool permissions (browser automation) and must not share context with the build agent. Use `CLAUDE_CONFIG_DIR` to create a dedicated instance:
+
+```bash
+# In ~/.zshrc or ~/.bashrc
+alias claude-build="CLAUDE_CONFIG_DIR=~/.claude-build claude"
+alias claude-test="CLAUDE_CONFIG_DIR=~/.claude-test claude"
+```
+
+Then install `webapp-blueprint-test` once into the test instance:
+
+```bash
+claude-test skill add --source gh:seriouscoderone/webapp-blueprint/skills/test
+```
+
+In practice:
+```bash
+# Terminal 1 — build agent (your main project directory)
+claude-build
+
+# Terminal 2 — test agent (same project directory, isolated context)
+claude-test
+```
+
+Both instances operate on the same `blackbox/` folder on disk, but have no shared memory or tool state. The `manifest.json` / `final_test_results/` files are the only communication channel between them.
+
 ## License
 
 MIT
