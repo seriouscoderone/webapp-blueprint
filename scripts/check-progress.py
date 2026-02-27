@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scan the spec/ directory and report webapp blueprint pipeline progress.
 
-Checks each of the 17 pipeline steps across all tiers and detected apps,
+Checks each of the 19 pipeline steps across all tiers and detected apps,
 then suggests the next step to work on.
 """
 
@@ -38,8 +38,15 @@ APP_SPEC_FILES = {
     15: ("Authorization Spec", "authorization.md"),
 }
 
-# Tier 4 validation outputs (Steps 16-17)
+# Tier 4 validation outputs (Steps 16-19)
 VALIDATION_REPORTS = ["gap-report.md", "contradiction-report.md", "completeness-score.md"]
+
+TIER4_LABELS = {
+    16: "Validation & Gap Analysis",
+    17: "Generation Briefs",
+    18: "Seed Data Specification",
+    19: "Blackbox Test Template",
+}
 
 
 def count_files(directory: Path, suffix: str) -> int:
@@ -83,6 +90,14 @@ def check_app(spec_dir: Path, app_name: str) -> dict:
     gen_dir = app_dir / "generation-briefs"
     result["tier4"][17] = gen_dir.is_dir() and any(gen_dir.iterdir()) if gen_dir.is_dir() else False
 
+    # Tier 4 — seed data (Step 18)
+    result["tier4"][18] = (app_dir / "seed-data.md").is_file()
+
+    # Tier 4 — blackbox test template (Step 19)
+    # blackbox/ is a sibling of spec/ at the project root
+    blackbox_dir = spec_dir.parent / "blackbox" / "templates"
+    result["tier4"][19] = (blackbox_dir / f"{app_name}_test.template.json").is_file()
+
     return result
 
 
@@ -116,7 +131,7 @@ def suggest_next(tier1: dict, apps: list[str], app_results: dict) -> str:
                 return f"Step {step} — {label} (app: {app})"
         for step in sorted(r["tier4"]):
             if not r["tier4"][step]:
-                label = "Validation & Gap Analysis" if step == 16 else "Generation Briefs"
+                label = TIER4_LABELS.get(step, f"Step {step}")
                 return f"Step {step} — {label} (app: {app})"
 
     return "All steps complete!"
@@ -173,7 +188,7 @@ def main():
 
         print("  Tier 4:")
         for step in sorted(r["tier4"]):
-            label = "Validation & Gap Analysis" if step == 16 else "Generation Briefs"
+            label = TIER4_LABELS.get(step, f"Step {step}")
             mark = "\u2713" if r["tier4"][step] else " "
             print(f"    [{mark}] Step {step}: {label}")
 

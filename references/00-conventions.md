@@ -2,10 +2,10 @@
 
 ## Spec Folder Structure
 
-All outputs are written under `./spec/` relative to the working directory:
+Spec artifacts are written under `./spec/` relative to the working directory. Runtime artifacts (Step 19 and beyond) are written to sibling folders:
 
 ```
-spec/
+spec/                               ← specification artifacts (blueprint skill)
 ├── suite/
 │   ├── domain-model.md
 │   ├── role-permission-matrix.md
@@ -37,6 +37,10 @@ spec/
             ├── gap-report.md
             ├── contradiction-report.md
             └── completeness-score.md
+
+blackbox/                           ← runtime artifact folder (build/test cycle)
+└── templates/
+    └── {app_name}_test.template.json   ← Step 19 output
 ```
 
 ---
