@@ -4,17 +4,37 @@
     "name": "seriouscoderone"
   },
   "metadata": {
-    "description": "Enterprise web application specification pipeline — 17-step design process producing a complete /spec folder ready for code generation."
+    "description": "Enterprise web application specification, build, and test pipeline — 19-step design process producing a complete /spec folder, plus companion skills for building and BDD-testing the resulting application."
   },
   "plugins": [
     {
       "name": "webapp-blueprint",
       "source": "./",
-      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 17 sequential design steps — from domain discovery, role matrices, and design systems through BDD features, page specs, component contracts, API definitions, and authorization policies. Produces a complete /spec folder ready for code generation.",
+      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 19 sequential design steps — from domain discovery, role matrices, and design systems through BDD features, page specs, component contracts, API definitions, authorization policies, seed data, and blackbox test templates. Produces a complete /spec folder and suite test template ready for code generation. See also: webapp-blueprint-build (implement + fix cycle) and webapp-blueprint-test (BDD scenario execution).",
       "version": "1.0.0",
       "strict": false,
       "skills": [
         "./"
+      ]
+    },
+    {
+      "name": "webapp-blueprint-build",
+      "source": "./skills/build/",
+      "description": "Build, test, fix, and spec-sync cycle for webapp-blueprint suites. Guides the build agent through deploying from generation briefs, coordinating the test agent, fixing BDD failures sequentially, and syncing spec gaps back to the blueprint.",
+      "version": "1.0.0",
+      "strict": false,
+      "skills": [
+        "./skills/build/"
+      ]
+    },
+    {
+      "name": "webapp-blueprint-test",
+      "source": "./skills/test/",
+      "description": "Blackbox BDD test execution for webapp-blueprint suites. Reads the suite test template and manifest, runs every scenario against the deployed app, and writes results for the build agent to consume. Run in a completely separate Claude Code session from the build agent.",
+      "version": "1.0.0",
+      "strict": false,
+      "skills": [
+        "./skills/test/"
       ]
     }
   ]

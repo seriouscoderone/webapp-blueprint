@@ -91,17 +91,44 @@ spec/
     ├── contradiction-report.md
     └── completeness-score.md
 
-blackbox/templates/                 # Tier 4 (Step 19)
-└── {app_name}_test.template.json
+blackbox/
+├── templates/                      # Tier 4 (Step 19) — spec snapshot
+│   └── {suite_name}_test.template.json
+└── builds/{build_token}/           # Runtime — written by build/test skills
+    ├── manifest.json
+    ├── test_results.json
+    └── final_test_results/
+        └── results.json
 ```
 
-## Validation Scripts
+## Scripts
 
-Three helper scripts are included for pipeline management:
+Five helper scripts are included:
 
 - **`scripts/check-progress.py`** — Scans `./spec/` and reports which steps are complete, which are pending, and what to work on next.
 - **`scripts/validate-spec.py`** — Cross-references all spec artifacts to find gaps, contradictions, and produces a completeness score.
-- **`scripts/generate-blackbox-template.py`** — Parses BDD feature files and generates a machine-readable JSON test template under `./blackbox/templates/`.
+- **`scripts/generate-blackbox-template.py`** — Parses all BDD feature files for a suite and generates a machine-readable JSON test template under `./blackbox/templates/`. Usage: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
+- **`scripts/wait-for-results.py`** — Polls for `final_test_results/` from the test agent. Used by the build skill. Exits 0 when results arrive, 1 on timeout.
+- **`scripts/summarize-results.py`** — Prints PASSED/FAILED/UNTESTED counts per app from a completed test run.
+
+## Companion Skills
+
+This repo contains three installable skills that cover the full spec → build → test lifecycle:
+
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| `webapp-blueprint` | `/webapp-blueprint` | Design the spec (19 steps) |
+| `webapp-blueprint-build` | `/webapp-blueprint-build` | Implement from briefs, fix BDD failures, sync spec gaps |
+| `webapp-blueprint-test` | `/webapp-blueprint-test` | Execute BDD scenarios against the running app (separate session) |
+
+Install individually:
+```bash
+claude skill add --source gh:seriouscoderone/webapp-blueprint           # spec
+claude skill add --source gh:seriouscoderone/webapp-blueprint/skills/build  # build
+claude skill add --source gh:seriouscoderone/webapp-blueprint/skills/test   # test
+```
+
+**Typical workflow:** run `webapp-blueprint` to produce the spec → run `webapp-blueprint-build` in your project session to build and deploy → run `webapp-blueprint-test` in a separate session to execute BDD scenarios → build skill reads results and fixes failures → repeat until green.
 
 ## License
 

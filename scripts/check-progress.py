@@ -93,10 +93,13 @@ def check_app(spec_dir: Path, app_name: str) -> dict:
     # Tier 4 — seed data (Step 18)
     result["tier4"][18] = (app_dir / "seed-data.md").is_file()
 
-    # Tier 4 — blackbox test template (Step 19)
-    # blackbox/ is a sibling of spec/ at the project root
+    # Tier 4 — blackbox test template (Step 19) — suite-scoped file
     blackbox_dir = spec_dir.parent / "blackbox" / "templates"
-    result["tier4"][19] = (blackbox_dir / f"{app_name}_test.template.json").is_file()
+    suite_template_exists = blackbox_dir.is_dir() and any(
+        f.is_file() and f.name.endswith("_test.template.json")
+        for f in blackbox_dir.iterdir()
+    )
+    result["tier4"][19] = suite_template_exists
 
     return result
 
