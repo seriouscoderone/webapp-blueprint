@@ -1,6 +1,6 @@
 # Webapp Blueprint
 
-A Claude Code skill that implements an **18-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, component contracts, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation.
+A Claude Code skill that implements a **19-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, component contracts, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation, plus a machine-readable blackbox test template for the build/test cycle.
 
 ## Installation
 
@@ -55,13 +55,13 @@ The pipeline is organized into 4 tiers:
 | 1 | 1–5 | Suite-wide (run once) | Domain model, roles, design system, navigation, API conventions |
 | 2 | 6–8 | Per-app (run once each) | App archetype, domain refinement, role refinement |
 | 3 | 9–15 | Per-app (detailed) | BDD features, IA, pages, components, state, APIs, authorization |
-| 4 | 16–18 | Per-app (final) | Spec validation, generation briefs, seed data |
+| 4 | 16–19 | Per-app (final) | Spec validation, generation briefs, seed data, blackbox test template |
 
 Supports 6 app archetypes: CRUD Manager, Dashboard/Analytics, Workflow Engine, Content Platform, Communication Hub, and Configuration/Admin.
 
 ## Output Structure
 
-All artifacts are generated under `./spec/` in your working directory:
+Spec artifacts are generated under `./spec/` in your working directory. Step 19 writes to a sibling `blackbox/` folder:
 
 ```
 spec/
@@ -83,21 +83,25 @@ spec/
 │   ├── api-contracts.md
 │   ├── authorization.md
 │   ├── seed-data.md                # Tier 4 (Step 18)
-│   └── generation-briefs/          # Tier 4
+│   └── generation-briefs/          # Tier 4 (Step 17)
 │       ├── _build-order.md
 │       └── {page_name}-brief.md
-└── validation/reports/{app_name}/  # Tier 4
+└── validation/reports/{app_name}/  # Tier 4 (Step 16)
     ├── gap-report.md
     ├── contradiction-report.md
     └── completeness-score.md
+
+blackbox/templates/                 # Tier 4 (Step 19)
+└── {app_name}_test.template.json
 ```
 
 ## Validation Scripts
 
-Two helper scripts are included for pipeline management:
+Three helper scripts are included for pipeline management:
 
 - **`scripts/check-progress.py`** — Scans `./spec/` and reports which steps are complete, which are pending, and what to work on next.
 - **`scripts/validate-spec.py`** — Cross-references all spec artifacts to find gaps, contradictions, and produces a completeness score.
+- **`scripts/generate-blackbox-template.py`** — Parses BDD feature files and generates a machine-readable JSON test template under `./blackbox/templates/`.
 
 ## License
 
