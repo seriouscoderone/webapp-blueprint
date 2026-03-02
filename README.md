@@ -121,11 +121,9 @@ This repo contains three installable skills that cover the full spec → build �
 | `webapp-blueprint-build` | `/webapp-blueprint-build` | Implement from briefs, fix BDD failures, sync spec gaps |
 | `webapp-blueprint-test` | `/webapp-blueprint-test` | Execute BDD scenarios against the running app (separate session) |
 
-Install individually:
+One install registers all three skills:
 ```bash
-claude skill add --source gh:seriouscoderone/webapp-blueprint           # spec
-claude skill add --source gh:seriouscoderone/webapp-blueprint/skills/build  # build
-claude skill add --source gh:seriouscoderone/webapp-blueprint/skills/test   # test
+claude skill add --source gh:seriouscoderone/webapp-blueprint
 ```
 
 **Typical workflow:** run `webapp-blueprint` to produce the spec → run `webapp-blueprint-build` in your project session to build and deploy → run `webapp-blueprint-test` in a separate session to execute BDD scenarios → build skill reads results and fixes failures → repeat until green.
