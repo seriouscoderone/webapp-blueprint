@@ -24,7 +24,7 @@
       "version": "1.0.0",
       "strict": false,
       "skills": [
-        "./skills/build/"
+        "./"
       ]
     },
     {
@@ -34,7 +34,7 @@
       "version": "1.0.0",
       "strict": false,
       "skills": [
-        "./skills/test/"
+        "./"
       ]
     }
   ]
