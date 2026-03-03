@@ -118,6 +118,16 @@ If all rows pass, mark as `PASSED`.
 
 ---
 
+## On Failure: Log and Move On
+
+When a scenario fails, the only correct action is:
+1. Record `status: "FAILED"` with full `error_detail` and `steps_to_reproduce`
+2. Move on to the next scenario
+
+Do not attempt to understand why the code is broken. Do not open source files. Do not edit anything. Do not run `npm install`, restart the server, or take any remediation action. The failure is the signal — the build agent handles the rest.
+
+---
+
 ## Error Capture Guidelines
 
 **error_detail** should include:

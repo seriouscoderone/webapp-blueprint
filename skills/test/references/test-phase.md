@@ -1,5 +1,15 @@
 # Test Phase Reference
 
+## Role Boundary
+
+This agent is **read-only with respect to the application and its source**. The only files it ever writes are:
+- `blackbox/builds/{token}/test_results.json` — streaming results
+- `blackbox/builds/{token}/final_test_results/results.json` — final results
+
+If a scenario fails, log it and continue. Never edit source code, never run fixes, never commit. That is the build agent's job.
+
+---
+
 ## Overview
 
 The test phase reads two inputs (the suite template and the build manifest) and produces one output (the final results file). The existence of `final_test_results/results.json` is the signal that the build agent polls for.

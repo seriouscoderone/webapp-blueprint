@@ -1,9 +1,25 @@
 ---
 name: webapp-blueprint-test
-description: Blackbox BDD test execution for webapp-blueprint suites. Reads the suite test template and manifest, runs every scenario against the deployed app, and writes results for the build agent to consume. Run this in a completely separate Claude Code session from the build agent — it requires browser automation tools and must not share context with the build agent.
+description: Blackbox BDD test execution for webapp-blueprint suites. READ-ONLY role — executes scenarios via browser automation and logs results. NEVER modifies source code, configuration, or any project files. Writes only to blackbox/builds/{token}/. Run in a completely separate Claude Code session from the build agent.
 ---
 
 # Webapp Blueprint Test — BDD Scenario Executor
+
+## CRITICAL: Read-Only Role
+
+**This agent observes and reports. It does not fix.**
+
+| Allowed | Prohibited |
+|---------|-----------|
+| Navigate the running app via browser | Modify source code |
+| Execute BDD scenarios | Edit config files |
+| Write to `blackbox/builds/{token}/` | Run build commands |
+| Record PASSED / FAILED / error details | Commit or push changes |
+| Read spec files and seed-data.md | Suggest or apply fixes |
+
+If a scenario fails, record the failure with full detail and move on to the next scenario. **Stop. Do not fix. Do not touch code.** The build agent reads the results and decides what to fix.
+
+---
 
 ## Overview
 
