@@ -37,7 +37,7 @@ This skill is a **single-purpose test executor**. It:
 
 ## Prerequisites
 
-- Browser automation tool available: **Playwright** (`npx playwright test`) or **claude-in-chrome MCP**
+- **Playwright** installed: `npx playwright install` (use the `example-skills:webapp-testing` skill for Playwright integration)
 - Network access to the app's `base_url` (from `manifest.json`)
 - Read/write access to `blackbox/builds/` and `blackbox/templates/`
 

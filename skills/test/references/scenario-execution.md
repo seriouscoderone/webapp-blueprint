@@ -22,18 +22,20 @@ Scenario format in `.feature.md`:
 
 ## Step Translation
 
-| BDD Keyword | Browser Action |
-|-------------|---------------|
-| `Given ... is logged in as {role}` | Navigate to login page, authenticate as a seed user with that role |
-| `Given ... navigates to {path}` | `navigate(base_url + path)` |
-| `When ... clicks {element}` | `find(element description)`, `left_click(ref)` |
-| `When ... fills in {field} with {value}` | `find(field)`, `form_input(ref, value)` |
-| `When ... submits the form` | Find and click the submit button |
-| `Then ... sees {text}` | `find(text on page)` — assert element exists |
-| `Then ... is redirected to {path}` | Assert current URL contains path |
-| `Then ... {element} is not visible` | Assert element not present in accessible tree |
+Use **Playwright** for all browser interactions. Each scenario runs in its own `page` context.
 
-For steps not covered by this table, interpret the Given/When/Then semantically and translate to the most natural browser action.
+| BDD Keyword | Playwright Action |
+|-------------|-----------------|
+| `Given ... is logged in as {role}` | `await page.goto(base_url + '/login')` then fill credentials and submit |
+| `Given ... navigates to {path}` | `await page.goto(base_url + path)` |
+| `When ... clicks {element}` | `await page.getByRole(...).click()` or `await page.locator(...).click()` |
+| `When ... fills in {field} with {value}` | `await page.getByLabel(field).fill(value)` |
+| `When ... submits the form` | `await page.getByRole('button', { name: /submit/i }).click()` |
+| `Then ... sees {text}` | `await expect(page.getByText(text)).toBeVisible()` |
+| `Then ... is redirected to {path}` | `await expect(page).toHaveURL(new RegExp(path))` |
+| `Then ... {element} is not visible` | `await expect(page.locator(...)).not.toBeVisible()` |
+
+For steps not covered by this table, interpret the Given/When/Then semantically and use the most appropriate Playwright locator (`getByRole`, `getByLabel`, `getByText`, `locator`). Prefer accessible locators over CSS selectors.
 
 ---
 
