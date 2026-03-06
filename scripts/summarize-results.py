@@ -58,17 +58,22 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--build-token", help="Build token (reads from blackbox/builds/{token}/final_test_results/results.json)")
     group.add_argument("--results-file", help="Direct path to results.json")
+    parser.add_argument("--project-dir", default=None, help="Project root directory (sets --blackbox-dir default to <project-dir>/blackbox)")
     parser.add_argument(
         "--blackbox-dir",
-        default="./blackbox",
-        help="Path to blackbox directory (default: ./blackbox)",
+        default=None,
+        help="Path to blackbox directory (default: ./blackbox or <project-dir>/blackbox)",
     )
     args = parser.parse_args()
 
     if args.results_file:
         results_path = Path(args.results_file).resolve()
     else:
-        blackbox_dir = Path(args.blackbox_dir).resolve()
+        if args.project_dir is not None:
+            project_dir = Path(args.project_dir).resolve()
+            blackbox_dir = Path(args.blackbox_dir).resolve() if args.blackbox_dir else project_dir / "blackbox"
+        else:
+            blackbox_dir = Path(args.blackbox_dir).resolve() if args.blackbox_dir else Path("./blackbox").resolve()
         results_path = blackbox_dir / "builds" / args.build_token / "final_test_results" / "results.json"
 
     if not results_path.is_file():

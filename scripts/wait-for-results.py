@@ -25,14 +25,19 @@ def main() -> int:
     parser.add_argument("--build-token", required=True, help="Build token (subdirectory under blackbox/builds/)")
     parser.add_argument("--timeout", type=int, default=600, help="Seconds before giving up (default: 600)")
     parser.add_argument("--interval", type=int, default=30, help="Seconds between status prints (default: 30)")
+    parser.add_argument("--project-dir", default=None, help="Project root directory (sets --blackbox-dir default to <project-dir>/blackbox)")
     parser.add_argument(
         "--blackbox-dir",
-        default="./blackbox",
-        help="Path to blackbox directory (default: ./blackbox)",
+        default=None,
+        help="Path to blackbox directory (default: ./blackbox or <project-dir>/blackbox)",
     )
     args = parser.parse_args()
 
-    blackbox_dir = Path(args.blackbox_dir).resolve()
+    if args.project_dir is not None:
+        project_dir = Path(args.project_dir).resolve()
+        blackbox_dir = Path(args.blackbox_dir).resolve() if args.blackbox_dir else project_dir / "blackbox"
+    else:
+        blackbox_dir = Path(args.blackbox_dir).resolve() if args.blackbox_dir else Path("./blackbox").resolve()
     results_dir = blackbox_dir / "builds" / args.build_token / "final_test_results"
 
     print(f"Waiting for test results: {results_dir}")

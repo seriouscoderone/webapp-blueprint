@@ -94,11 +94,13 @@ When this skill is invoked, follow these steps:
 
 ### 1. Detect Current State
 
-Run the progress checker to understand where the user is in the pipeline:
+Run the progress checker to understand where the user is in the pipeline. The scripts ship with this skill — use `--project-dir` to point them at the user's project without needing to copy anything into the repo:
 
 ```bash
-python3 scripts/check-progress.py --spec-dir ./spec
+python3 {SKILL_DIR}/scripts/check-progress.py --project-dir {project_root}
 ```
+
+Where `{SKILL_DIR}` is the directory containing this skill and `{project_root}` is the user's project directory (the parent of `spec/` and `blackbox/`). If the user's working directory is the project root, `--project-dir .` works.
 
 If the `./spec` directory does not exist, the user is starting fresh.
 
@@ -232,9 +234,9 @@ These steps produce the detailed artifacts for each app. When working on Tier 3:
 ### Tier 4 — Validation & Generation (Steps 16–19)
 
 These steps run **after Tier 3 is complete** for an app. When working on Tier 4:
-- Step 16 uses `scripts/validate-spec.py` to automate cross-reference checks
+- Step 16 uses `{SKILL_DIR}/scripts/validate-spec.py --app {app} --project-dir {project_root}` to automate cross-reference checks
 - Review validation results with the user and fix gaps; a score ≥ 80 is required to proceed
 - Step 17 produces the final generation briefs — these drive the code generation sequence
 - Step 18 produces the seed data specification — ensures generated code can be tested immediately
 - The build order in Step 17 also determines the correct seed insertion order for Step 18
-- Step 19 uses `scripts/generate-blackbox-template.py` to produce a machine-readable JSON test template — the handoff artifact for the build/test cycle skill
+- Step 19 uses `{SKILL_DIR}/scripts/generate-blackbox-template.py --suite {suite} --project-dir {project_root}` to produce a machine-readable JSON test template — the handoff artifact for the build/test cycle skill

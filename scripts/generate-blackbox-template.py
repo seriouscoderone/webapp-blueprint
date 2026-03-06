@@ -160,16 +160,22 @@ def main() -> int:
         description="Generate a suite-scoped JSON blackbox test template from BDD feature files (Step 19)"
     )
     parser.add_argument("--suite", required=True, help="Suite name (e.g. 'acme', 'my-platform')")
-    parser.add_argument("--spec-dir", default="./spec", help="Path to spec directory (default: ./spec)")
+    parser.add_argument("--project-dir", default=None, help="Project root directory (sets --spec-dir and --output-dir defaults)")
+    parser.add_argument("--spec-dir", default=None, help="Path to spec directory (default: ./spec or <project-dir>/spec)")
     parser.add_argument(
         "--output-dir",
-        default="./blackbox/templates",
-        help="Output directory for the template (default: ./blackbox/templates)",
+        default=None,
+        help="Output directory for the template (default: ./blackbox/templates or <project-dir>/blackbox/templates)",
     )
     args = parser.parse_args()
 
-    spec_dir = Path(args.spec_dir).resolve()
-    output_dir = Path(args.output_dir).resolve()
+    if args.project_dir is not None:
+        project_dir = Path(args.project_dir).resolve()
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else project_dir / "spec"
+        output_dir = Path(args.output_dir).resolve() if args.output_dir else project_dir / "blackbox" / "templates"
+    else:
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else Path("./spec").resolve()
+        output_dir = Path(args.output_dir).resolve() if args.output_dir else Path("./blackbox/templates").resolve()
 
     if not spec_dir.is_dir():
         print(f"ERROR: Spec directory not found: {spec_dir}")

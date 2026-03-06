@@ -394,11 +394,16 @@ def write_completeness_report(path: Path, final_scores: dict, gaps: list, contra
 
 def main():
     parser = argparse.ArgumentParser(description="Validate webapp blueprint specs for an app (Step 16)")
-    parser.add_argument("--spec-dir", default="./spec", help="Path to spec directory (default: ./spec)")
+    parser.add_argument("--project-dir", default=None, help="Project root directory (sets --spec-dir default to <project-dir>/spec)")
+    parser.add_argument("--spec-dir", default=None, help="Path to spec directory (default: ./spec or <project-dir>/spec)")
     parser.add_argument("--app", required=True, help="App name to validate (must exist under spec/apps/)")
     args = parser.parse_args()
 
-    spec_dir = Path(args.spec_dir).resolve()
+    if args.project_dir is not None:
+        project_dir = Path(args.project_dir).resolve()
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else project_dir / "spec"
+    else:
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else Path("./spec").resolve()
     app_dir = spec_dir / "apps" / args.app
 
     if not spec_dir.is_dir():

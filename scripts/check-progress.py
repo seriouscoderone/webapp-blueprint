@@ -142,10 +142,15 @@ def suggest_next(tier1: dict, apps: list[str], app_results: dict) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Check webapp blueprint pipeline progress")
-    parser.add_argument("--spec-dir", default="./spec", help="Path to spec directory (default: ./spec)")
+    parser.add_argument("--project-dir", default=None, help="Project root directory (sets --spec-dir default to <project-dir>/spec)")
+    parser.add_argument("--spec-dir", default=None, help="Path to spec directory (default: ./spec or <project-dir>/spec)")
     args = parser.parse_args()
 
-    spec_dir = Path(args.spec_dir).resolve()
+    if args.project_dir is not None:
+        project_dir = Path(args.project_dir).resolve()
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else project_dir / "spec"
+    else:
+        spec_dir = Path(args.spec_dir).resolve() if args.spec_dir else Path("./spec").resolve()
     if not spec_dir.is_dir():
         print(f"Spec directory not found: {spec_dir}")
         print("No pipeline progress to report. Start with Step 1 — Domain Discovery.")
