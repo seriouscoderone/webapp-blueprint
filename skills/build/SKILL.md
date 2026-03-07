@@ -17,14 +17,18 @@ This skill guides the **build agent** through a continuous loop that runs until 
 │  2. Write manifest.json  ← signals test agent        │
 │  3. wait-for-results.py  ← blocks until test done    │
 │  4. summarize-results.py ← check pass/fail           │
-│  5. If failures: fix each one, commit, redeploy      │
-│  6. Go to 1                                          │
+│     ↓ all PASSED                ↓ failures           │
+│  5. Spec Sync (final)     5. Fix each failure        │
+│  6. STOP                  6. Spec Sync ← HERE        │
+│                           7. Redeploy → go to 1      │
 │                                                       │
 │  Exit only when: all PASSED or 3× same failure       │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Do not stop between cycles.** After fixing failures and deploying, automatically generate a new `build_token`, write a new `manifest.json`, and wait for the next test run. Only stop when `summarize-results.py` exits 0 (all PASSED) or the stopping condition is hit.
+**Spec Sync runs after every fix cycle** — once you've discovered and written the fixes, you know exactly what the spec was missing or wrong about. Update the spec to reflect that before redeploying, so each new cycle starts from an honest spec. If BDD features change, regenerate the suite template before the next build.
+
+**Do not stop between cycles.** Only stop when `summarize-results.py` exits 0 (all PASSED) or the stopping condition is hit.
 
 **Critical:** The test agent is a **completely separate Claude Code session**. The build agent never runs tests itself — it only writes the `manifest.json` signal and waits.
 
@@ -89,8 +93,8 @@ See `references/fix-cycle.md` for full details.
 ```bash
 # Read results
 python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
-# exits 0 = all passed → run Spec Sync then STOP
-# exits 1 = failures exist → fix them, then loop back to Build Phase
+# exits 0 = all passed → run Spec Sync (final cleanup) then STOP
+# exits 1 = failures exist → fix them, then Spec Sync, then redeploy
 
 # For each FAILED scenario:
 # 1. Read steps_to_reproduce + error_detail
@@ -98,7 +102,7 @@ python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
 # 3. Fix code until test passes
 # 4. git commit -m "fix: {scenario title} — {description}"
 
-# After all fixes committed: redeploy → new BUILD_TOKEN → back to Build Phase
+# After all fixes committed: run Spec Sync, then redeploy → new BUILD_TOKEN
 ```
 
 ---
@@ -107,13 +111,15 @@ python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
 
 See `references/spec-sync.md` for full details.
 
-After all tests pass (or after any cycle with fix commits):
+**Run after every fix cycle** — before redeploying. The fixes reveal what the spec was wrong or incomplete about; update it while that understanding is fresh.
+
 ```bash
 git log {pre_build_sha}..HEAD --oneline
-# Review: does any fix commit contradict or extend the spec?
+# Review: do any fix commits contradict or extend the spec?
 # Write: blackbox/builds/{token}/spec-gaps.md
-# Apply spec updates if needed, then re-run Step 19:
+# Apply spec updates, then if BDD features changed, regenerate the template:
 python3 scripts/generate-blackbox-template.py --suite {suite_name}
+# Now redeploy
 ```
 
 ---

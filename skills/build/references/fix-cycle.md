@@ -63,16 +63,33 @@ git commit -m "fix: User can view order history — empty state shown when no or
 
 ---
 
-## Step 3: Automatically Start the Next Cycle
+## Step 3: Spec Sync Before Redeploying
 
-Once all FAILED scenarios have been addressed, **do not wait for user input** — immediately start the next cycle:
+Once all FAILED scenarios have been fixed and committed, **run Spec Sync before starting the next cycle**. You now know exactly what the spec was missing or wrong about — this is the best moment to update it.
+
+See `references/spec-sync.md` for the full process. In brief:
+
+1. `git log {pre_build_sha}..HEAD --oneline` — review what changed in this fix cycle
+2. For each fix commit, identify what it reveals about spec gaps:
+   - New code paths not covered by any BDD scenario → add scenario
+   - API shape differs from `api-contracts.md` → update contract
+   - Seed records were missing → update `seed-data.md`
+3. Apply updates to `spec/`
+4. If BDD features changed: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
+5. Commit spec updates: `git commit -m "spec: sync gaps from fix cycle {build_token}"`
+
+---
+
+## Step 4: Start the Next Cycle
+
+After Spec Sync, **do not wait for user input** — immediately redeploy:
 
 1. Verify your new tests all pass: `npm test` (or equivalent)
 2. Deploy (new SHA → new build_token)
 3. Write `blackbox/builds/{new_token}/manifest.json`
 4. Run `python3 scripts/wait-for-results.py --build-token {new_token}`
 5. Run `python3 scripts/summarize-results.py --build-token {new_token}`
-   - exits 0 → all passed — run Spec Sync and stop
+   - exits 0 → all passed — run Spec Sync (final cleanup) and stop
    - exits 1 → failures remain — go back to Step 1 of this fix cycle
 
 ---
