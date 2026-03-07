@@ -5,7 +5,7 @@ Watches blackbox/builds/ for a subdirectory that has a manifest.json but
 no final_test_results/ directory — indicating a build is ready for testing.
 
 Usage:
-    python3 scripts/wait-for-build.py [--blackbox-dir ./blackbox] [--timeout 3600] [--interval 15]
+    python3 scripts/wait-for-build.py [--blackbox-dir ./blackbox] [--timeout 3600]
 
 Exit codes:
     0  A ready build was found — prints the build_token to stdout
@@ -50,18 +50,12 @@ def main() -> int:
         default=3600,
         help="Seconds before giving up (default: 3600)",
     )
-    parser.add_argument(
-        "--interval",
-        type=int,
-        default=15,
-        help="Seconds between polls (default: 15)",
-    )
     args = parser.parse_args()
 
     builds_dir = Path(args.blackbox_dir).resolve() / "builds"
 
     print(f"Polling for new build in: {builds_dir}")
-    print(f"Timeout: {args.timeout}s | Interval: {args.interval}s")
+    print(f"Timeout: {args.timeout}s | Polling every 60s")
 
     start = time.monotonic()
     while True:
@@ -77,7 +71,7 @@ def main() -> int:
 
         minutes, seconds = divmod(int(elapsed), 60)
         print(f"Waiting for new build... {minutes}m {seconds}s elapsed", file=sys.stderr)
-        time.sleep(args.interval)
+        time.sleep(60)
 
 
 if __name__ == "__main__":
