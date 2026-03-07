@@ -5,7 +5,7 @@ Watches blackbox/builds/ for a subdirectory that has a manifest.json but
 no final_test_results/ directory — indicating a build is ready for testing.
 
 Usage:
-    python3 scripts/wait-for-build.py [--blackbox-dir ./blackbox] [--timeout 3600]
+    python3 scripts/wait-for-build.py [--blackbox-dir ./blackbox] [--timeout 7200]
 
 Exit codes:
     0  A ready build was found — prints the build_token to stdout
@@ -47,8 +47,8 @@ def main() -> int:
     parser.add_argument(
         "--timeout",
         type=int,
-        default=3600,
-        help="Seconds before giving up (default: 3600)",
+        default=7200,
+        help="Seconds before giving up (default: 7200)",
     )
     args = parser.parse_args()
 

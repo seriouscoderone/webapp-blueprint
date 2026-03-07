@@ -5,7 +5,7 @@ Waits for the test agent to create the final_test_results/ directory inside
 the given build's folder, indicating all scenarios have been executed.
 
 Usage:
-    python3 scripts/wait-for-results.py --build-token TOKEN [--timeout 600]
+    python3 scripts/wait-for-results.py --build-token TOKEN [--timeout 7200]
 
 Exit codes:
     0  Final results directory found — test run is complete
@@ -23,7 +23,7 @@ def main() -> int:
         description="Poll for webapp-blueprint-test results"
     )
     parser.add_argument("--build-token", required=True, help="Build token (subdirectory under blackbox/builds/)")
-    parser.add_argument("--timeout", type=int, default=600, help="Seconds before giving up (default: 600)")
+    parser.add_argument("--timeout", type=int, default=7200, help="Seconds before giving up (default: 7200)")
     parser.add_argument("--project-dir", default=None, help="Project root directory (sets --blackbox-dir default to <project-dir>/blackbox)")
     parser.add_argument(
         "--blackbox-dir",
