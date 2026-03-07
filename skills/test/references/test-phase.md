@@ -16,25 +16,17 @@ The test phase reads two inputs (the suite template and the build manifest) and 
 
 ---
 
-## Step 1: Find the Build to Test
+## Step 1: Poll for the Next Build
 
 ```bash
-ls -lt blackbox/builds/
+BUILD_TOKEN=$(python3 scripts/wait-for-build.py)
+# Blocks until blackbox/builds/{token}/manifest.json exists
+# and final_test_results/ does NOT exist.
+# Prints build_token to stdout on exit 0.
+# Exits 1 on timeout (default 3600s).
 ```
 
-A build is ready when `manifest.json` exists but `final_test_results/` does not:
-
-```python
-# Pseudocode
-for token_dir in sorted(builds_dir.iterdir(), key=mtime, reverse=True):
-    manifest = token_dir / "manifest.json"
-    done = token_dir / "final_test_results"
-    if manifest.exists() and not done.exists():
-        # This is the build to test
-        break
-```
-
-If multiple ready builds exist, pick the most recently created.
+If multiple ready builds exist, the script picks the most recently modified one.
 
 ---
 
@@ -115,6 +107,26 @@ final_dir = builds_dir / token / "final_test_results"
 final_dir.mkdir(parents=True, exist_ok=True)
 (final_dir / "results.json").write_text(json.dumps(completed_doc, indent=2))
 ```
+
+---
+
+## Step 6: Loop or Stop
+
+After writing `final_test_results/results.json`, check whether all scenarios passed:
+
+```python
+# Pseudocode
+all_passed = all(
+    scenario["status"] == "PASSED"
+    for app_data in results.values() if isinstance(app_data, dict)
+    for feature_data in app_data.values() if isinstance(feature_data, dict)
+    for scenario in feature_data.values()
+    if isinstance(scenario, dict) and "_type" in scenario
+)
+```
+
+- **All PASSED** → print a summary and stop. The cycle is complete.
+- **Any FAILED** → go back to Step 1 immediately. Poll for the next `manifest.json`. The build agent will fix the failures, deploy again, and write a new manifest. Do not prompt the user — just wait.
 
 ---
 

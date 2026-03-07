@@ -63,13 +63,17 @@ git commit -m "fix: User can view order history — empty state shown when no or
 
 ---
 
-## Step 3: After All Fixes
+## Step 3: Automatically Start the Next Cycle
 
-Once all FAILED scenarios have been addressed (or after hitting the stopping condition):
+Once all FAILED scenarios have been addressed, **do not wait for user input** — immediately start the next cycle:
 
 1. Verify your new tests all pass: `npm test` (or equivalent)
-2. Trigger a new deployment (new SHA → new build_token → new manifest.json)
-3. The test agent runs again against the fixed build
+2. Deploy (new SHA → new build_token)
+3. Write `blackbox/builds/{new_token}/manifest.json`
+4. Run `python3 scripts/wait-for-results.py --build-token {new_token}`
+5. Run `python3 scripts/summarize-results.py --build-token {new_token}`
+   - exits 0 → all passed — run Spec Sync and stop
+   - exits 1 → failures remain — go back to Step 1 of this fix cycle
 
 ---
 

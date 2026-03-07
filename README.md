@@ -108,6 +108,7 @@ Five helper scripts are included:
 - **`scripts/check-progress.py`** — Scans `./spec/` and reports which steps are complete, which are pending, and what to work on next.
 - **`scripts/validate-spec.py`** — Cross-references all spec artifacts to find gaps, contradictions, and produces a completeness score.
 - **`scripts/generate-blackbox-template.py`** — Parses all BDD feature files for a suite and generates a machine-readable JSON test template under `./blackbox/templates/`. Usage: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
+- **`scripts/wait-for-build.py`** — Polls for a new ready build in `blackbox/builds/`. Used by the test skill. Prints `build_token` to stdout on exit 0, exits 1 on timeout.
 - **`scripts/wait-for-results.py`** — Polls for `final_test_results/` from the test agent. Used by the build skill. Exits 0 when results arrive, 1 on timeout.
 - **`scripts/summarize-results.py`** — Prints PASSED/FAILED/UNTESTED counts per app from a completed test run.
 

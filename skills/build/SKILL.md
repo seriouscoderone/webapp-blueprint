@@ -7,13 +7,24 @@ description: Build, test, fix, and spec-sync cycle for webapp-blueprint suites. 
 
 ## Overview
 
-This skill guides the **build agent** through the full implementation and validation cycle for a webapp-blueprint suite:
+This skill guides the **build agent** through a continuous loop that runs until all BDD scenarios pass:
 
-1. **Build Phase** — implement the app from generation briefs and seed data, deploy it, signal the test agent
-2. **Poll** — wait for the test agent to finish (`scripts/wait-for-results.py`)
-3. **Fix Phase** — read failures from `final_test_results/results.json`, fix each sequentially
-4. **Spec Sync** — update the spec to reflect what was actually built
-5. **Repeat** — new deployment → new build_token → new test cycle → until all green
+```
+┌─────────────────────────────────────────────────────┐
+│  loop until summarize-results.py exits 0             │
+│                                                       │
+│  1. Build & deploy                                    │
+│  2. Write manifest.json  ← signals test agent        │
+│  3. wait-for-results.py  ← blocks until test done    │
+│  4. summarize-results.py ← check pass/fail           │
+│  5. If failures: fix each one, commit, redeploy      │
+│  6. Go to 1                                          │
+│                                                       │
+│  Exit only when: all PASSED or 3× same failure       │
+└─────────────────────────────────────────────────────┘
+```
+
+**Do not stop between cycles.** After fixing failures and deploying, automatically generate a new `build_token`, write a new `manifest.json`, and wait for the next test run. Only stop when `summarize-results.py` exits 0 (all PASSED) or the stopping condition is hit.
 
 **Critical:** The test agent is a **completely separate Claude Code session**. The build agent never runs tests itself — it only writes the `manifest.json` signal and waits.
 
@@ -78,12 +89,16 @@ See `references/fix-cycle.md` for full details.
 ```bash
 # Read results
 python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
+# exits 0 = all passed → run Spec Sync then STOP
+# exits 1 = failures exist → fix them, then loop back to Build Phase
 
 # For each FAILED scenario:
 # 1. Read steps_to_reproduce + error_detail
 # 2. Write a failing unit/integration test
 # 3. Fix code until test passes
 # 4. git commit -m "fix: {scenario title} — {description}"
+
+# After all fixes committed: redeploy → new BUILD_TOKEN → back to Build Phase
 ```
 
 ---
