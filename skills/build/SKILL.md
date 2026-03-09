@@ -80,7 +80,7 @@ mkdir -p blackbox/builds/$BUILD_TOKEN
 # Write blackbox/builds/$BUILD_TOKEN/manifest.json
 
 # 5. Wait for test results
-python3 scripts/wait-for-results.py --build-token $BUILD_TOKEN
+python3 {SKILL_DIR}/scripts/wait-for-results.py --build-token $BUILD_TOKEN
 ```
 
 ---
@@ -92,7 +92,7 @@ See `references/fix-cycle.md` for full details.
 **Quick start:**
 ```bash
 # Read results
-python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
+python3 {SKILL_DIR}/scripts/summarize-results.py --build-token $BUILD_TOKEN
 # exits 0 = all passed → run Spec Sync (final cleanup) then STOP
 # exits 1 = failures exist → fix them, then Spec Sync, then redeploy
 
@@ -118,7 +118,7 @@ git log {pre_build_sha}..HEAD --oneline
 # Review: do any fix commits contradict or extend the spec?
 # Write: blackbox/builds/{token}/spec-gaps.md
 # Apply spec updates, then if BDD features changed, regenerate the template:
-python3 scripts/generate-blackbox-template.py --suite {suite_name}
+python3 {SKILL_DIR}/scripts/generate-blackbox-template.py --suite {suite_name}
 # Now redeploy
 ```
 

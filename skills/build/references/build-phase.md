@@ -111,7 +111,7 @@ blackbox/builds/{build_token}/manifest.json
 ## Step 6: Wait for Results
 
 ```bash
-python3 scripts/wait-for-results.py --build-token $BUILD_TOKEN
+python3 {SKILL_DIR}/scripts/wait-for-results.py --build-token $BUILD_TOKEN
 ```
 
 | Exit Code | Meaning | Action |

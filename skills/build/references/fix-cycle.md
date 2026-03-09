@@ -9,7 +9,7 @@ After `wait-for-results.py` exits 0, read `final_test_results/results.json` and 
 ## Step 1: Read and Prioritize Failures
 
 ```bash
-python3 scripts/summarize-results.py --build-token $BUILD_TOKEN
+python3 {SKILL_DIR}/scripts/summarize-results.py --build-token $BUILD_TOKEN
 ```
 
 This prints PASSED/FAILED/UNTESTED counts per app, lists FAILED scenario titles, and exits 1 if any failures exist.
@@ -75,7 +75,7 @@ See `references/spec-sync.md` for the full process. In brief:
    - API shape differs from `api-contracts.md` → update contract
    - Seed records were missing → update `seed-data.md`
 3. Apply updates to `spec/`
-4. If BDD features changed: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
+4. If BDD features changed: `python3 {SKILL_DIR}/scripts/generate-blackbox-template.py --suite {suite_name}`
 5. Commit spec updates: `git commit -m "spec: sync gaps from fix cycle {build_token}"`
 
 ---
@@ -87,8 +87,8 @@ After Spec Sync, **do not wait for user input** — immediately redeploy:
 1. Verify your new tests all pass: `npm test` (or equivalent)
 2. Deploy (new SHA → new build_token)
 3. Write `blackbox/builds/{new_token}/manifest.json`
-4. Run `python3 scripts/wait-for-results.py --build-token {new_token}`
-5. Run `python3 scripts/summarize-results.py --build-token {new_token}`
+4. Run `python3 {SKILL_DIR}/scripts/wait-for-results.py --build-token {new_token}`
+5. Run `python3 {SKILL_DIR}/scripts/summarize-results.py --build-token {new_token}`
    - exits 0 → all passed — run Spec Sync (final cleanup) and stop
    - exits 1 → failures remain — go back to Step 1 of this fix cycle
 

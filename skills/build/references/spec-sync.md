@@ -66,7 +66,7 @@ With user confirmation (or autonomously in full-auto mode), apply the proposed c
 1. Edit the relevant spec files
 2. If BDD features were updated, regenerate the suite template:
    ```bash
-   python3 scripts/generate-blackbox-template.py --suite {suite_name}
+   python3 {SKILL_DIR}/scripts/generate-blackbox-template.py --suite {suite_name}
    ```
 3. Commit the spec updates:
    ```bash

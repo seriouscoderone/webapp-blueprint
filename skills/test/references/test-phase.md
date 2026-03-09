@@ -19,7 +19,7 @@ The test phase reads two inputs (the suite template and the build manifest) and 
 ## Step 1: Poll for the Next Build
 
 ```bash
-BUILD_TOKEN=$(python3 scripts/wait-for-build.py)
+BUILD_TOKEN=$(python3 {SKILL_DIR}/scripts/wait-for-build.py)
 # Blocks until blackbox/builds/{token}/manifest.json exists
 # and final_test_results/ does NOT exist.
 # Prints build_token to stdout on exit 0.

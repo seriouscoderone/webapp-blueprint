@@ -72,7 +72,7 @@ blackbox/
 Use `scripts/wait-for-build.py` to poll for the next build. It blocks until a ready build appears and prints the `build_token`:
 
 ```bash
-BUILD_TOKEN=$(python3 scripts/wait-for-build.py)
+BUILD_TOKEN=$(python3 {SKILL_DIR}/scripts/wait-for-build.py)
 # exits 0 and prints build_token when ready
 # exits 1 on timeout (default 3600s)
 ```
@@ -85,7 +85,7 @@ A build is "ready to test" when `blackbox/builds/{token}/manifest.json` exists a
 
 See `references/test-phase.md` for the full execution protocol.
 
-1. Run `BUILD_TOKEN=$(python3 scripts/wait-for-build.py)` — blocks until a build is ready
+1. Run `BUILD_TOKEN=$(python3 {SKILL_DIR}/scripts/wait-for-build.py)` — blocks until a build is ready
 2. Read `manifest.json` → get `suite` name and per-app `base_url`s
 3. Read `blackbox/templates/{suite}_test.template.json` → scenario inventory
 4. For each app in the manifest, for each feature, for each scenario:
