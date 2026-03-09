@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scan the spec/ directory and report webapp blueprint pipeline progress.
 
-Checks each of the 19 pipeline steps across all tiers and detected apps,
+Checks each of the 18 pipeline steps across all tiers and detected apps,
 then suggests the next step to work on.
 """
 
@@ -13,7 +13,7 @@ from pathlib import Path
 SUITE_FILES = {
     1: ("Domain Discovery", "domain-model.md"),
     2: ("Role & Permission Matrix", "role-permission-matrix.md"),
-    3: ("Design System", "design-system.md"),
+    3: ("UI Conventions", "ui-conventions.md"),
     4: ("Navigation Shell", "navigation-shell.md"),
     5: ("API & Event Contracts", "api-event-contracts.md"),
 }
@@ -25,27 +25,26 @@ APP_FILES = {
     8: ("Role Refinement", "role-refinement.md"),
 }
 
-# Tier 3 per-app specs (Steps 9-15)
+# Tier 3 per-app specs (Steps 9-14)
 APP_DIRS = {
     9: ("BDD Features", "features", ".feature.md"),
     11: ("Page Specifications", "pages", ".md"),
-    12: ("Component Specifications", "components", ".md"),
 }
 APP_SPEC_FILES = {
     10: ("Information Architecture", "ia-spec.md"),
-    13: ("State & Interaction", "state-interaction.md"),
-    14: ("API Contracts", "api-contracts.md"),
-    15: ("Authorization Spec", "authorization.md"),
+    12: ("State & Interaction", "state-interaction.md"),
+    13: ("API Contracts", "api-contracts.md"),
+    14: ("Authorization Spec", "authorization.md"),
 }
 
-# Tier 4 validation outputs (Steps 16-19)
+# Tier 4 validation outputs (Steps 15-18)
 VALIDATION_REPORTS = ["gap-report.md", "contradiction-report.md", "completeness-score.md"]
 
 TIER4_LABELS = {
-    16: "Validation & Gap Analysis",
-    17: "Generation Briefs",
-    18: "Seed Data Specification",
-    19: "Blackbox Test Template",
+    15: "Validation & Gap Analysis",
+    16: "Generation Briefs",
+    17: "Seed Data Specification",
+    18: "Blackbox Test Template",
 }
 
 
@@ -84,22 +83,22 @@ def check_app(spec_dir: Path, app_name: str) -> dict:
     # Tier 4 — validation reports
     val_dir = spec_dir / "validation" / "reports" / app_name
     reports_exist = all((val_dir / r).is_file() for r in VALIDATION_REPORTS)
-    result["tier4"][16] = reports_exist
+    result["tier4"][15] = reports_exist
 
     # Tier 4 — generation briefs
     gen_dir = app_dir / "generation-briefs"
-    result["tier4"][17] = gen_dir.is_dir() and any(gen_dir.iterdir()) if gen_dir.is_dir() else False
+    result["tier4"][16] = gen_dir.is_dir() and any(gen_dir.iterdir()) if gen_dir.is_dir() else False
 
-    # Tier 4 — seed data (Step 18)
-    result["tier4"][18] = (app_dir / "seed-data.md").is_file()
+    # Tier 4 — seed data (Step 17)
+    result["tier4"][17] = (app_dir / "seed-data.md").is_file()
 
-    # Tier 4 — blackbox test template (Step 19) — suite-scoped file
+    # Tier 4 — blackbox test template (Step 18) — suite-scoped file
     blackbox_dir = spec_dir.parent / "blackbox" / "templates"
     suite_template_exists = blackbox_dir.is_dir() and any(
         f.is_file() and f.name.endswith("_test.template.json")
         for f in blackbox_dir.iterdir()
     )
-    result["tier4"][19] = suite_template_exists
+    result["tier4"][18] = suite_template_exists
 
     return result
 

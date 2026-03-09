@@ -1,15 +1,15 @@
-# Step 18: Seed Data Specification
+# Step 17: Seed Data Specification
 
 ## Tier
-4 — Per-app (final, runs after Steps 16–17 are complete for an app)
+4 — Per-app (final, runs after Steps 15–16 are complete for an app)
 
 ## Purpose
 Define a complete, realistic dataset that exercises every BDD scenario, covers all user roles, and populates all entity relationships — ready to feed fixtures, factories, or a seed script. Seed data ensures the generated application can be immediately tested with meaningful, representative data rather than empty states or arbitrary values.
 
 ## Prerequisites
 - `./spec/apps/{app_name}/features/*.feature.md` (Step 9) — BDD scenarios to cover
-- `./spec/apps/{app_name}/api-contracts.md` (Step 14) — entity schemas and field types
-- `./spec/apps/{app_name}/generation-briefs/` (Step 17) — build order and page context
+- `./spec/apps/{app_name}/api-contracts.md` (Step 13) — entity schemas and field types
+- `./spec/apps/{app_name}/generation-briefs/` (Step 16) — build order and page context
 
 ## Inputs to Read
 - `./spec/apps/{app_name}/features/*.feature.md` — to enumerate all scenarios requiring data

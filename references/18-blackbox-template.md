@@ -1,4 +1,4 @@
-# Step 19: Blackbox Test Template
+# Step 18: Blackbox Test Template
 
 ## Tier
 4 — Suite-level (run after Step 9 BDD features exist for all apps; can run any time after Step 9)

@@ -1,4 +1,4 @@
-# Step 16: Spec Consistency Validator
+# Step 15: Spec Consistency Validator
 
 ## Tier
 4 — Validation and generation (runs after all Tier 1-3 steps for an app are complete)
@@ -12,7 +12,7 @@ All specification files for the target app must exist before validation:
 **Suite-level (Tier 1):**
 - `./spec/suite/domain-model.md` (Step 1)
 - `./spec/suite/role-permission-matrix.md` (Step 2)
-- `./spec/suite/design-system.md` (Step 3)
+- `./spec/suite/ui-conventions.md` (Step 3)
 - `./spec/suite/navigation-shell.md` (Step 4)
 - `./spec/suite/api-event-contracts.md` (Step 5)
 
@@ -25,10 +25,9 @@ All specification files for the target app must exist before validation:
 - `./spec/apps/{app_name}/features/*.feature.md` (Step 9)
 - `./spec/apps/{app_name}/ia-spec.md` (Step 10)
 - `./spec/apps/{app_name}/pages/*.md` (Step 11)
-- `./spec/apps/{app_name}/components/*.md` (Step 12)
-- `./spec/apps/{app_name}/state-interaction.md` (Step 13)
-- `./spec/apps/{app_name}/api-contracts.md` (Step 14)
-- `./spec/apps/{app_name}/authorization.md` (Step 15)
+- `./spec/apps/{app_name}/state-interaction.md` (Step 12)
+- `./spec/apps/{app_name}/api-contracts.md` (Step 13)
+- `./spec/apps/{app_name}/authorization.md` (Step 14)
 
 ## Inputs to Read
 - Every file listed in Prerequisites above for the target `{app_name}`
@@ -47,7 +46,7 @@ This step is primarily automated. The interrogation is minimal and focused on co
 
 ### 1. Pre-Validation Confirmation
 - "Which app do you want to validate?" (select from existing apps)
-- "Do you want to run a full validation or focus on specific check categories?" (Entity, Role, Feature, Page, Component, API, Authorization, State, Navigation, Design System)
+- "Do you want to run a full validation or focus on specific check categories?" (Entity, Role, Feature, Page, API, Authorization, State, Navigation, UI Conventions)
 - "Are there any known gaps or in-progress items I should flag but not count as failures?"
 
 ### 2. Post-Validation Review
@@ -91,48 +90,47 @@ Verify that every feature defined in `apps/{app_name}/features/` has substantive
 Verify that every page listed in `apps/{app_name}/ia-spec.md` has a corresponding page pattern spec in `apps/{app_name}/pages/`.
 - Each route defined in the IA spec must have a matching `pages/{page_name}.md` file
 - Page file names must match the kebab-case version of the page name in the IA spec
-- Every page must define its layout pattern, which must exist in the design system or archetype defaults
+- Every page must define its layout pattern, which must exist in the archetype defaults
 
-### 5. Component Coverage
-Verify that every component referenced in page specs has a corresponding component contract.
-- Each component named in any `pages/*.md` file must have a matching `components/{component_name}.md` file
-- Component prop interfaces must be fully defined (no TBD or placeholder props)
-- Components referenced in multiple pages must have consistent prop interfaces across all references
-
-### 6. API Coverage
-Verify that every data requirement in page specs, state specs, and component contracts has a corresponding API endpoint.
+### 5. API Coverage
+Verify that every data requirement in page specs and state specs has a corresponding API endpoint.
 - Every data-fetching hook or query in `state-interaction.md` must map to an endpoint in `api-contracts.md`
 - Every mutation action in state specs must map to a mutation endpoint
-- Every endpoint in `api-contracts.md` must be referenced by at least one page, component, or state spec
+- Every endpoint in `api-contracts.md` must be referenced by at least one page or state spec
 - App-level endpoints must not conflict with suite-level API contracts in `suite/api-event-contracts.md`
 
-### 7. Authorization Coverage
+### 6. Authorization Coverage
 Verify that every route and API endpoint has an authorization policy defined.
 - Every route in `ia-spec.md` must have a corresponding entry in `authorization.md`
 - Every endpoint in `api-contracts.md` must have a corresponding authorization rule
 - Authorization roles must match roles defined in `role-refinement.md`
 - Conditional access rules must reference valid entity attributes and states
 
-### 8. State Coverage
+### 7. State Coverage
 Verify that every page has loading, error, and empty states defined.
 - Each page in `pages/*.md` must define at minimum: loading state, error state, empty state
 - State transitions referenced in `state-interaction.md` must match the states defined in page specs
 - Optimistic update strategies must be defined for mutation-heavy pages
 - Form validation states must be defined for pages containing forms
 
-### 9. Navigation Consistency
+### 8. Navigation Consistency
 Verify that all page cross-references (connected pages, breadcrumbs, navigation links) resolve to valid pages.
 - Every "connected page" reference in a page spec must match a valid page in `ia-spec.md`
 - Breadcrumb paths must follow the IA hierarchy
 - Navigation links defined in `suite/navigation-shell.md` must resolve to pages defined in this app or other suite apps
 - Deep link URLs must match route patterns defined in `ia-spec.md`
 
-### 10. Design System Compliance
-Verify that component variants and styling tokens align with the design system.
-- Component variants referenced in page specs must exist in the design system or the component contract
-- Color, spacing, and typography tokens used in component contracts must exist in `suite/design-system.md`
-- Responsive breakpoints referenced in page specs must match design system breakpoints
-- Icon names referenced in components must exist in the design system icon set
+### 9. UI Conventions Compliance
+Verify that styling references in page specs align with the suite UI conventions.
+- Responsive breakpoints referenced in page specs must match the breakpoints in `suite/ui-conventions.md`
+- Spacing and layout references must be consistent with the defined spacing scale and grid
+- Accessibility requirements referenced in page specs must meet the WCAG level defined in `suite/ui-conventions.md`
+
+### 10. Cross-App Consistency
+Verify that entities, roles, and events shared across apps are used consistently.
+- App-level domain entities must not contradict definitions in other app refinements
+- Events published by one app that are consumed by another must have matching payload schemas
+- Suite-level navigation links must resolve to valid pages across all apps
 
 ## Scoring Rubric
 
@@ -148,7 +146,6 @@ Measures the percentage of expected artifacts that exist. Each artifact category
 | Feature files | At least one `.feature.md` per feature area identified in archetype |
 | IA spec | `ia-spec.md` exists |
 | Page specs | One `pages/*.md` file per page listed in IA spec |
-| Component specs | One `components/*.md` file per component referenced in page specs |
 | State interaction | `state-interaction.md` exists |
 | API contracts | `api-contracts.md` exists |
 | Authorization | `authorization.md` exists |
@@ -163,10 +160,9 @@ Measures the percentage of cross-references that resolve correctly without contr
 | Entity references | App entities map to suite entities without attribute conflicts |
 | Role references | App roles map to suite roles without permission escalation |
 | Page references | Navigation cross-references resolve to valid pages |
-| Component references | Components in page specs match component contracts |
 | API references | Data requirements map to defined endpoints |
 | Authorization references | Routes and endpoints have matching auth policies |
-| Design token references | Tokens used in components exist in the design system |
+| UI conventions references | Breakpoints and spacing match suite conventions |
 
 Formula: `(valid cross-references / total cross-references) * 100`
 
@@ -191,19 +187,19 @@ Weighted average of the three scores:
 Formula: `(completeness * 0.40) + (consistency * 0.35) + (coverage * 0.25)`
 
 **Thresholds:**
-- **≥ 80**: Ready — proceed to Step 17 (Generation Briefs) and Step 18 (Seed Data)
+- **≥ 80**: Ready — proceed to Step 16 (Generation Briefs) and Step 17 (Seed Data)
 - **65–79**: Conditional — user may proceed with acknowledged gaps; list all gaps explicitly
 - **< 65**: Blocked — do not proceed; surface the top 5 gaps and require remediation first
 
 ---
 
-## Gate: Proceeding to Steps 17 and 18
+## Gate: Proceeding to Steps 16 and 17
 
 The overall score determines whether the spec is ready to proceed:
 
-- **Score ≥ 80: PASS** — proceed to Step 17 (Generation Briefs) and/or Step 18 (Seed Data Specification)
+- **Score ≥ 80: PASS** — proceed to Step 16 (Generation Briefs) and/or Step 17 (Seed Data Specification)
 - **Score 65–79: CONDITIONAL** — user may proceed but Claude must explicitly list every known gap and confirm the user accepts the risk of incomplete generation output
-- **Score < 65: BLOCK** — do not proceed to Step 17 or Step 18; surface the top 5 highest-impact gaps and require the user to remediate them before re-running validation
+- **Score < 65: BLOCK** — do not proceed to Step 16 or Step 17; surface the top 5 highest-impact gaps and require the user to remediate them before re-running validation
 
 ## Output Specification
 

@@ -1,4 +1,4 @@
-# Step 14: App-Level API Contracts
+# Step 13: App-Level API Contracts
 
 ## Tier
 3 — Per-app specification (runs for each app; defines the concrete API surface the app requires)

@@ -1,6 +1,6 @@
 # Webapp Blueprint
 
-A Claude Code skill that implements a **19-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, component contracts, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation, plus a machine-readable blackbox test template for the build/test cycle.
+A Claude Code skill that implements a **18-step enterprise web application specification pipeline**. It guides you through systematic design — from domain discovery and role matrices through BDD features, page specs, API definitions, and authorization policies — producing a complete `/spec` folder ready for code generation, plus a machine-readable blackbox test template for the build/test cycle.
 
 ## Installation
 
@@ -52,23 +52,23 @@ The pipeline is organized into 4 tiers:
 
 | Tier | Steps | Scope | Purpose |
 |------|-------|-------|---------|
-| 1 | 1–5 | Suite-wide (run once) | Domain model, roles, design system, navigation, API conventions |
+| 1 | 1–5 | Suite-wide (run once) | Domain model, roles, UI conventions, navigation, API conventions |
 | 2 | 6–8 | Per-app (run once each) | App archetype, domain refinement, role refinement |
-| 3 | 9–15 | Per-app (detailed) | BDD features, IA, pages, components, state, APIs, authorization |
-| 4 | 16–19 | Per-app (final) | Spec validation, generation briefs, seed data, blackbox test template |
+| 3 | 9–14 | Per-app (detailed) | BDD features, IA, pages, state, APIs, authorization |
+| 4 | 15–18 | Per-app (final) | Spec validation, generation briefs, seed data, blackbox test template |
 
 Supports 6 app archetypes: CRUD Manager, Dashboard/Analytics, Workflow Engine, Content Platform, Communication Hub, and Configuration/Admin.
 
 ## Output Structure
 
-Spec artifacts are generated under `./spec/` in your working directory. Step 19 writes to a sibling `blackbox/` folder:
+Spec artifacts are generated under `./spec/` in your working directory. Step 18 writes to a sibling `blackbox/` folder:
 
 ```
 spec/
 ├── suite/                          # Tier 1 — shared foundations
 │   ├── domain-model.md
 │   ├── role-permission-matrix.md
-│   ├── design-system.md
+│   ├── ui-conventions.md
 │   ├── navigation-shell.md
 │   └── api-event-contracts.md
 ├── apps/{app_name}/                # Tier 2–3 — per-app specs
@@ -78,21 +78,20 @@ spec/
 │   ├── features/*.feature.md
 │   ├── ia-spec.md
 │   ├── pages/*.md
-│   ├── components/*.md
 │   ├── state-interaction.md
 │   ├── api-contracts.md
 │   ├── authorization.md
-│   ├── seed-data.md                # Tier 4 (Step 18)
-│   └── generation-briefs/          # Tier 4 (Step 17)
+│   ├── seed-data.md                # Tier 4 (Step 17)
+│   └── generation-briefs/          # Tier 4 (Step 16)
 │       ├── _build-order.md
 │       └── {page_name}-brief.md
-└── validation/reports/{app_name}/  # Tier 4 (Step 16)
+└── validation/reports/{app_name}/  # Tier 4 (Step 15)
     ├── gap-report.md
     ├── contradiction-report.md
     └── completeness-score.md
 
 blackbox/
-├── templates/                      # Tier 4 (Step 19) — spec snapshot
+├── templates/                      # Tier 4 (Step 18) — spec snapshot
 │   └── {suite_name}_test.template.json
 └── builds/{build_token}/           # Runtime — written by build/test skills
     ├── manifest.json
@@ -107,7 +106,7 @@ Five helper scripts are included:
 
 - **`scripts/check-progress.py`** — Scans `./spec/` and reports which steps are complete, which are pending, and what to work on next.
 - **`scripts/validate-spec.py`** — Cross-references all spec artifacts to find gaps, contradictions, and produces a completeness score.
-- **`scripts/generate-blackbox-template.py`** — Parses all BDD feature files for a suite and generates a machine-readable JSON test template under `./blackbox/templates/`. Usage: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
+- **`scripts/generate-blackbox-template.py`** — Step 18: Parses all BDD feature files for a suite and generates a machine-readable JSON test template under `./blackbox/templates/`. Usage: `python3 scripts/generate-blackbox-template.py --suite {suite_name}`
 - **`scripts/wait-for-build.py`** — Polls for a new ready build in `blackbox/builds/`. Used by the test skill. Prints `build_token` to stdout on exit 0, exits 1 on timeout.
 - **`scripts/wait-for-results.py`** — Polls for `final_test_results/` from the test agent. Used by the build skill. Exits 0 when results arrive, 1 on timeout.
 - **`scripts/summarize-results.py`** — Prints PASSED/FAILED/UNTESTED counts per app from a completed test run.
@@ -118,7 +117,7 @@ This repo contains three installable skills that cover the full spec → build �
 
 | Skill | Command | Purpose |
 |-------|---------|---------|
-| `webapp-blueprint` | `/webapp-blueprint` | Design the spec (19 steps) |
+| `webapp-blueprint` | `/webapp-blueprint` | Design the spec (18 steps) |
 | `webapp-blueprint-build` | `/webapp-blueprint-build` | Implement from briefs, fix BDD failures, sync spec gaps |
 | `webapp-blueprint-test` | `/webapp-blueprint-test` | Execute BDD scenarios against the running app (separate session) |
 

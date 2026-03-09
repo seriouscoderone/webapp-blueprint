@@ -1,7 +1,7 @@
-# Step 17: Frontend Generation Brief
+# Step 16: Frontend Generation Brief
 
 ## Tier
-4 — Validation and generation (runs after all Tier 1-3 steps and Step 16 validation are complete)
+4 — Validation and generation (runs after all Tier 1-3 steps and Step 15 validation are complete)
 
 ## Purpose
 The Frontend Generation Brief produces per-page build instructions optimized for feeding into an AI code generation pipeline. Each brief is a self-contained document that gives a code generator everything it needs to build one page — design tokens, data requirements, component manifest, state shape, interaction flows, authorization rules, and acceptance criteria. The build order ensures pages are generated in dependency order so shared components and simpler pages are built first.
@@ -12,7 +12,7 @@ All specification files for the target app plus passing validation:
 **Suite-level (Tier 1):**
 - `./spec/suite/domain-model.md` (Step 1)
 - `./spec/suite/role-permission-matrix.md` (Step 2)
-- `./spec/suite/design-system.md` (Step 3)
+- `./spec/suite/ui-conventions.md` (Step 3)
 - `./spec/suite/navigation-shell.md` (Step 4)
 - `./spec/suite/api-event-contracts.md` (Step 5)
 
@@ -25,24 +25,23 @@ All specification files for the target app plus passing validation:
 - `./spec/apps/{app_name}/features/*.feature.md` (Step 9)
 - `./spec/apps/{app_name}/ia-spec.md` (Step 10)
 - `./spec/apps/{app_name}/pages/*.md` (Step 11)
-- `./spec/apps/{app_name}/components/*.md` (Step 12)
-- `./spec/apps/{app_name}/state-interaction.md` (Step 13)
-- `./spec/apps/{app_name}/api-contracts.md` (Step 14)
-- `./spec/apps/{app_name}/authorization.md` (Step 15)
+- `./spec/apps/{app_name}/state-interaction.md` (Step 12)
+- `./spec/apps/{app_name}/api-contracts.md` (Step 13)
+- `./spec/apps/{app_name}/authorization.md` (Step 14)
 
 **Validation (Tier 4):**
-- `./spec/validation/reports/{app_name}/completeness-score.md` (Step 16) — overall score must be 75 or above
+- `./spec/validation/reports/{app_name}/completeness-score.md` (Step 15) — overall score must be 75 or above
 
 ## Inputs to Read
 - Every file listed in Prerequisites above for the target `{app_name}`
-- All three validation reports from Step 16 (to understand known gaps and their status)
+- All three validation reports from Step 15 (to understand known gaps and their status)
 
 ## App Selection Process
 Before generating briefs, determine scope:
 1. List all apps found in `./spec/apps/` subdirectories.
 2. Ask: "Which app do you want to generate briefs for?"
-3. Check that Step 16 validation reports exist and the overall score is 75 or above.
-4. If the score is below 75, warn the user and recommend re-running Step 16 after fixing gaps. Allow them to proceed if they explicitly choose to.
+3. Check that Step 15 validation reports exist and the overall score is 75 or above.
+4. If the score is below 75, warn the user and recommend re-running Step 15 after fixing gaps. Allow them to proceed if they explicitly choose to.
 
 ## Interrogation Process
 
@@ -139,13 +138,7 @@ Each page gets its own generation brief file following this structure:
 - **File Path**: {suggested file path in the codebase, e.g., src/pages/orders/OrderDetail.tsx}
 
 ## Design Tokens
-{Relevant subset of the design system for this page. Include only tokens actually used.}
-
-### Colors
-{Color tokens used on this page — backgrounds, text, borders, status indicators}
-
-### Typography
-{Font sizes, weights, and line heights used on this page}
+{Relevant subset of the UI conventions for this page. Include only tokens actually used.}
 
 ### Spacing
 {Spacing scale values used in the page layout}
@@ -273,7 +266,7 @@ In addition to per-page briefs, generate a build order document:
 - **Total Components**: {N}
 - **Target Framework**: {framework}
 - **Estimated Build Tiers**: {number of tiers A-G used}
-- **Validation Score**: {overall score from Step 16}
+- **Validation Score**: {overall score from Step 15}
 
 ## Dependency Graph
 {Text-based representation of page and component dependencies}
@@ -335,9 +328,8 @@ The build order document covering all pages and components, following the build 
 - [ ] `./spec/apps/{app_name}/generation-briefs/_build-order.md` created with dependency graph and sequenced tiers
 - [ ] One `{page_name}-brief.md` created per page in the app
 - [ ] Each brief contains all sections: context, design tokens, data, components, state, flows, auth, BDD, acceptance criteria
-- [ ] Component manifests reference actual component contracts from Step 12
-- [ ] API endpoints reference actual contracts from Step 14
-- [ ] Authorization rules reference actual policies from Step 15
+- [ ] API endpoints reference actual contracts from Step 13
+- [ ] Authorization rules reference actual policies from Step 14
 - [ ] BDD scenarios reference actual feature files from Step 9
 - [ ] Acceptance criteria are testable and complete
 - [ ] All briefs cross-checked against each other for consistency

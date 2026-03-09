@@ -4,13 +4,13 @@
     "name": "seriouscoderone"
   },
   "metadata": {
-    "description": "Enterprise web application specification, build, and test pipeline — 19-step design process producing a complete /spec folder, plus companion skills for building and BDD-testing the resulting application."
+    "description": "Enterprise web application specification, build, and test pipeline — 18-step design process producing a complete /spec folder, plus companion skills for building and BDD-testing the resulting application."
   },
   "plugins": [
     {
       "name": "webapp-blueprint",
       "source": "./",
-      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 19 sequential design steps — from domain discovery, role matrices, and design systems through BDD features, page specs, component contracts, API definitions, authorization policies, seed data, and blackbox test templates. Produces a complete /spec folder and suite test template ready for code generation. See also: webapp-blueprint-build (implement + fix cycle) and webapp-blueprint-test (BDD scenario execution).",
+      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 18 sequential design steps — from domain discovery, role matrices, and UI conventions through BDD features, page specs, API definitions, authorization policies, seed data, and blackbox test templates. Produces a complete /spec folder and suite test template ready for code generation. See also: webapp-blueprint-build (implement + fix cycle) and webapp-blueprint-test (BDD scenario execution).",
       "version": "1.0.0",
       "strict": false,
       "skills": [

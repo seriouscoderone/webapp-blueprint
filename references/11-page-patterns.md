@@ -4,7 +4,7 @@
 3 — Per-app specification (runs for each app; produces one spec file per page)
 
 ## Purpose
-Page Pattern Specifications translate the information architecture into concrete page-level designs. Each page is assigned a layout pattern, its data requirements are defined, user actions are enumerated, and all state variations (loading, empty, error, populated) are documented. These specs serve as the direct input for component inventory and implementation.
+Page Pattern Specifications translate the information architecture into concrete page-level designs. Each page is assigned a layout pattern, its data requirements are defined, user actions are enumerated, and all state variations (loading, empty, error, populated) are documented. These specs serve as the direct input for implementation.
 
 ## Prerequisites
 - `./spec/apps/{app_name}/ia-spec.md` — information architecture must be complete
@@ -17,7 +17,7 @@ Page Pattern Specifications translate the information architecture into concrete
 - `./spec/apps/{app_name}/archetype.md`
 - `./spec/apps/{app_name}/domain-refinement.md`
 - `./spec/apps/{app_name}/role-refinement.md`
-- `./spec/suite/design-system.md` (for available design primitives)
+- `./spec/suite/ui-conventions.md` (for layout grid, spacing, and breakpoints)
 
 ## Layout Pattern Catalog
 

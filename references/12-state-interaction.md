@@ -1,4 +1,4 @@
-# Step 13: State & Interaction Design
+# Step 12: State & Interaction Design
 
 ## Tier
 3 — Per-app specification (runs for each app; defines how data flows and interactions behave)
@@ -8,12 +8,10 @@ State & Interaction Design documents how the app manages client-side state, sync
 
 ## Prerequisites
 - `./spec/apps/{app_name}/pages/*.md` — all page specs must be complete
-- `./spec/apps/{app_name}/components/*.md` — component inventory must be complete
 - `./spec/apps/{app_name}/features/*.feature.md` — BDD features for interaction context
 
 ## Inputs to Read
 - `./spec/apps/{app_name}/pages/*.md` (all page specs)
-- `./spec/apps/{app_name}/components/*.md` (all component specs)
 - `./spec/apps/{app_name}/features/*.feature.md`
 - `./spec/apps/{app_name}/domain-refinement.md`
 - `./spec/apps/{app_name}/archetype.md`

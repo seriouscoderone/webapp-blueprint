@@ -1,4 +1,4 @@
-# Step 15: Authorization Policy
+# Step 14: Authorization Policy
 
 ## Tier
 3 — Per-app specification (runs for each app; defines enforcement rules for access control)
