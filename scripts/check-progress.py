@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Scan the spec/ directory and report webapp blueprint pipeline progress.
 
-Checks each of the 18 pipeline steps across all tiers and detected apps,
+Checks each of the 9 pipeline steps across all tiers and detected apps,
 then suggests the next step to work on.
 """
 
@@ -15,7 +15,7 @@ SUITE_FILES = {
     2: ("Role & Permission Matrix", "role-permission-matrix.md"),
     3: ("UI Conventions", "ui-conventions.md"),
     4: ("Navigation Shell", "navigation-shell.md"),
-    5: ("API & Event Contracts", "api-event-contracts.md"),
+    5: ("Suite API Conventions", "api-event-contracts.md"),
 }
 
 # Tier 2 per-app files (Steps 6-8)
@@ -25,26 +25,9 @@ APP_FILES = {
     8: ("Role Refinement", "role-refinement.md"),
 }
 
-# Tier 3 per-app specs (Steps 9-14)
+# Tier 3 per-app directories (Step 9)
 APP_DIRS = {
     9: ("BDD Features", "features", ".feature.md"),
-    11: ("Page Specifications", "pages", ".md"),
-}
-APP_SPEC_FILES = {
-    10: ("Information Architecture", "ia-spec.md"),
-    12: ("State & Interaction", "state-interaction.md"),
-    13: ("API Contracts", "api-contracts.md"),
-    14: ("Authorization Spec", "authorization.md"),
-}
-
-# Tier 4 validation outputs (Steps 15-18)
-VALIDATION_REPORTS = ["gap-report.md", "contradiction-report.md", "completeness-score.md"]
-
-TIER4_LABELS = {
-    15: "Validation & Gap Analysis",
-    16: "Generation Briefs",
-    17: "Seed Data Specification",
-    18: "Blackbox Test Template",
 }
 
 
@@ -62,43 +45,19 @@ def check_tier1(spec_dir: Path) -> dict[int, bool]:
 
 
 def check_app(spec_dir: Path, app_name: str) -> dict:
-    """Check Tier 2-4 completion for a single app."""
+    """Check Tier 2-3 completion for a single app."""
     app_dir = spec_dir / "apps" / app_name
-    result = {"tier2": {}, "tier3": {}, "tier4": {}}
+    result = {"tier2": {}, "tier3": {}}
 
     # Tier 2
     for step, (_, fname) in APP_FILES.items():
         result["tier2"][step] = (app_dir / fname).is_file()
 
-    # Tier 3 — single files
-    for step, (_, fname) in APP_SPEC_FILES.items():
-        result["tier3"][step] = {"exists": (app_dir / fname).is_file(), "count": None}
-
-    # Tier 3 — directories with multiple files
+    # Tier 3 — directories with multiple files (Step 9)
     for step, (_, dirname, suffix) in APP_DIRS.items():
         d = app_dir / dirname
         n = count_files(d, suffix)
         result["tier3"][step] = {"exists": n > 0, "count": n}
-
-    # Tier 4 — validation reports
-    val_dir = spec_dir / "validation" / "reports" / app_name
-    reports_exist = all((val_dir / r).is_file() for r in VALIDATION_REPORTS)
-    result["tier4"][15] = reports_exist
-
-    # Tier 4 — generation briefs
-    gen_dir = app_dir / "generation-briefs"
-    result["tier4"][16] = gen_dir.is_dir() and any(gen_dir.iterdir()) if gen_dir.is_dir() else False
-
-    # Tier 4 — seed data (Step 17)
-    result["tier4"][17] = (app_dir / "seed-data.md").is_file()
-
-    # Tier 4 — blackbox test template (Step 18) — suite-scoped file
-    blackbox_dir = spec_dir.parent / "blackbox" / "templates"
-    suite_template_exists = blackbox_dir.is_dir() and any(
-        f.is_file() and f.name.endswith("_test.template.json")
-        for f in blackbox_dir.iterdir()
-    )
-    result["tier4"][18] = suite_template_exists
 
     return result
 
@@ -129,14 +88,10 @@ def suggest_next(tier1: dict, apps: list[str], app_results: dict) -> str:
                 return f"Step {step} — {APP_FILES[step][0]} (app: {app})"
         for step in sorted(r["tier3"]):
             if not r["tier3"][step]["exists"]:
-                label = APP_DIRS.get(step, (None,))[0] or APP_SPEC_FILES.get(step, (None,))[0]
-                return f"Step {step} — {label} (app: {app})"
-        for step in sorted(r["tier4"]):
-            if not r["tier4"][step]:
-                label = TIER4_LABELS.get(step, f"Step {step}")
+                label = APP_DIRS.get(step, (None,))[0]
                 return f"Step {step} — {label} (app: {app})"
 
-    return "All steps complete!"
+    return "All 9 steps complete! Run webapp-architect for technical specification."
 
 
 def main():
@@ -160,6 +115,9 @@ def main():
     app_results = {app: check_app(spec_dir, app) for app in apps}
 
     # --- Print report ---
+    total_steps = 5  # Tier 1 suite steps
+    completed_steps = sum(1 for v in tier1.values() if v)
+
     print("=== Webapp Blueprint Pipeline Progress ===\n")
     print("Tier 1 — Suite Level:")
     for step in sorted(SUITE_FILES):
@@ -174,33 +132,34 @@ def main():
 
     for app in apps:
         r = app_results[app]
+        app_total = 4  # Steps 6-9
+        app_completed = 0
+
         print(f"\nApp: {app}")
 
         print("  Tier 2:")
         for step in sorted(r["tier2"]):
             mark = "\u2713" if r["tier2"][step] else " "
+            if r["tier2"][step]:
+                app_completed += 1
             print(f"    [{mark}] Step {step}: {APP_FILES[step][0]}")
 
         print("  Tier 3:")
         for step in sorted(r["tier3"]):
             info = r["tier3"][step]
-            if info["count"] is not None:
-                label = APP_DIRS[step][0]
-                mark = "\u2713" if info["exists"] else " "
-                print(f"    [{mark}] Step {step}: {label} ({info['count']} files)")
-            else:
-                label = APP_SPEC_FILES[step][0]
-                mark = "\u2713" if info["exists"] else " "
-                print(f"    [{mark}] Step {step}: {label}")
+            label = APP_DIRS[step][0]
+            mark = "\u2713" if info["exists"] else " "
+            if info["exists"]:
+                app_completed += 1
+            print(f"    [{mark}] Step {step}: {label} ({info['count']} files)")
 
-        print("  Tier 4:")
-        for step in sorted(r["tier4"]):
-            label = TIER4_LABELS.get(step, f"Step {step}")
-            mark = "\u2713" if r["tier4"][step] else " "
-            print(f"    [{mark}] Step {step}: {label}")
+        total_steps += app_total
+        completed_steps += app_completed
+
+    print(f"\nProgress: {completed_steps}/{total_steps} steps complete")
 
     suggestion = suggest_next(tier1, apps, app_results)
-    print(f"\nSuggested Next Step: {suggestion}")
+    print(f"Suggested Next Step: {suggestion}")
 
 
 if __name__ == "__main__":

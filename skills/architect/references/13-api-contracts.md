@@ -11,7 +11,7 @@ App-Level API Contracts define the actual HTTP endpoints, request/response schem
 - `./spec/apps/{app_name}/features/*.feature.md` — BDD feature specs
 - `./spec/apps/{app_name}/pages/*.md` — page specs (to know what data each page needs)
 - `./spec/apps/{app_name}/state-interaction.md` — state management and caching requirements
-- `./spec/suite/api-event-contracts.md` — suite-wide API patterns and event bus
+- `./spec/suite/api-event-contracts.md` — suite-wide API conventions
 
 ## Inputs to Read
 - `./spec/apps/{app_name}/domain-refinement.md`
@@ -23,16 +23,14 @@ App-Level API Contracts define the actual HTTP endpoints, request/response schem
 
 ## Interrogation Process
 
-### 1. API Style & Conventions
-Establish the API foundation:
+### 1. App API Conventions
+Confirm app-level API conventions (inheriting from suite api-event-contracts.md):
 
-- Is the API RESTful, GraphQL, tRPC, or a combination? (Or do you want a recommendation based on the app's needs?)
-- What is the base URL pattern? (e.g., `/api/v1/{resource}`)
-- What naming convention should be used for endpoints? (kebab-case, camelCase, snake_case)
-- What is the standard response envelope? (e.g., `{ data, meta, errors }` or flat response?)
-- What authentication mechanism is used? (Bearer token, session cookie, API key)
+- What is the base URL pattern for this app? (e.g., `/api/v1/{resource}`)
+- What naming convention for endpoints? (kebab-case, camelCase, snake_case)
 - What is the standard date/time format? (ISO 8601, Unix timestamp)
 - What is the standard ID format? (UUID v4, CUID, auto-increment integer)
+- Any app-specific deviations from the suite-level conventions?
 
 ### 2. Endpoint Inventory
 Walk through each page and feature to derive endpoints:
@@ -70,13 +68,6 @@ If the state-interaction spec calls for real-time data:
 - What is the message format for each channel?
 - How does the client subscribe/unsubscribe?
 - Are there per-entity channels (e.g., subscribe to updates for a specific project)?
-
-### 5. Domain Events
-Identify events this app produces and consumes:
-
-- What domain events does this app emit when mutations occur? (Cross-reference with suite api-event-contracts.md)
-- What domain events from other apps does this app consume?
-- What is the event payload schema?
 
 ## Output Specification
 
@@ -206,19 +197,6 @@ For each channel:
 - **Message Format**: TypeScript interface for the message payload
 - **Reconnection**: Behavior when the connection drops
 
-#### Domain Events
-Events this app produces:
-| Event | Trigger | Payload |
-|---|---|---|
-| `project.created` | POST /projects | `{ projectId, name, createdBy }` |
-| `task.status.changed` | PUT /tasks/:id (status field) | `{ taskId, oldStatus, newStatus, changedBy }` |
-
-Events this app consumes:
-| Event | Source App | Handler |
-|---|---|---|
-| `user.deactivated` | Identity app | Remove user from project members |
-| `billing.subscription.changed` | Billing app | Update feature flags |
-
 ## Completion Checklist
 - [ ] `./spec/apps/{app_name}/api-contracts.md` created
 - [ ] API conventions (style, auth, response format) are documented
@@ -228,4 +206,3 @@ Events this app consumes:
 - [ ] Error responses are documented with status codes and error codes
 - [ ] Pagination is specified for all list endpoints
 - [ ] Real-time channels are defined if state-interaction spec requires them
-- [ ] Domain events (produced and consumed) are documented

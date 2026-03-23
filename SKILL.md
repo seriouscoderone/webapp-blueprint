@@ -1,21 +1,20 @@
 ---
 name: webapp-blueprint
-description: Comprehensive enterprise web application specification pipeline. Guides users through 18 sequential design steps — from domain discovery, role matrices, and UI conventions through BDD features, page specs, API definitions, authorization policies, seed data, and blackbox test templates. Produces a complete `/spec` folder ready for code generation. Use when designing, specifying, or planning a web application or application suite.
+description: Enterprise web application specification pipeline. Guides users through 9 sequential design steps — from domain discovery, role matrices, and UI conventions through navigation, API conventions, app archetypes, domain refinement, role refinement, and BDD features. Produces a complete `/spec` folder ready for downstream technical specification and code generation.
 ---
 
 # Webapp Blueprint — Enterprise Application Specification Pipeline
 
 ## Overview
 
-This skill implements a **18-step specification pipeline** organized into **4 tiers** that produces a comprehensive `./spec/` folder of markdown artifacts plus a machine-readable blackbox test template. Each step's outputs feed into subsequent steps, building from high-level domain concepts down to page-level generation briefs.
+This skill implements a **9-step specification pipeline** organized into **3 tiers** that produces a comprehensive `./spec/` folder of markdown artifacts. Each step's outputs feed into subsequent steps, building from high-level domain concepts down to testable BDD feature specifications.
 
 The pipeline is designed for **enterprise application suites** — collections of related web applications that share a domain model, UI conventions, and role hierarchy. It works equally well for a single application.
 
 **Tiers at a glance:**
 - **Tier 1** (Steps 1–5): Suite-level foundations — run once
 - **Tier 2** (Steps 6–8): Per-app classification — run once per app
-- **Tier 3** (Steps 9–14): Per-app detailed specification — run per app
-- **Tier 4** (Steps 15–18): Validation, generation briefs, seed data, and blackbox test template — run after Tier 3
+- **Tier 3** (Step 9): BDD feature specifications — run per app
 
 ---
 
@@ -27,20 +26,11 @@ The pipeline is designed for **enterprise application suites** — collections o
 | 2 | Role & Permission Matrix | 1 | Step 1 | `suite/role-permission-matrix.md` | `references/02-role-permission-matrix.md` |
 | 3 | UI Conventions | 1 | Step 1 | `suite/ui-conventions.md` | `references/03-ui-conventions.md` |
 | 4 | Navigation Shell | 1 | Steps 1–3 | `suite/navigation-shell.md` | `references/04-navigation-shell.md` |
-| 5 | API & Event Contracts | 1 | Steps 1–2 | `suite/api-event-contracts.md` | `references/05-api-event-contracts.md` |
+| 5 | Suite API Conventions | 1 | Steps 1–2 | `suite/api-event-contracts.md` | `references/05-api-event-contracts.md` |
 | 6 | App Archetype | 2 | Steps 1–5 | `apps/{app}/archetype.md` | `references/06-app-archetype.md` |
 | 7 | Domain Refinement | 2 | Steps 1, 6 | `apps/{app}/domain-refinement.md` | `references/07-domain-refinement.md` |
 | 8 | Role Refinement | 2 | Steps 2, 6–7 | `apps/{app}/role-refinement.md` | `references/08-role-refinement.md` |
 | 9 | BDD Features | 3 | Steps 6–8 | `apps/{app}/features/*.feature.md` | `references/09-bdd-features.md` |
-| 10 | Information Architecture | 3 | Steps 6–7, 9 | `apps/{app}/ia-spec.md` | `references/10-ia-spec.md` |
-| 11 | Page Patterns | 3 | Steps 6, 9–10 | `apps/{app}/pages/*.md` | `references/11-page-patterns.md` |
-| 12 | State & Interaction | 3 | Steps 9, 11 | `apps/{app}/state-interaction.md` | `references/12-state-interaction.md` |
-| 13 | API Contracts | 3 | Steps 5, 7, 11, 12 | `apps/{app}/api-contracts.md` | `references/13-api-contracts.md` |
-| 14 | Authorization Policy | 3 | Steps 8, 10, 13 | `apps/{app}/authorization.md` | `references/14-authorization-policy.md` |
-| 15 | Spec Validator | 4 | Steps 1–14 | `validation/reports/{app}/*` | `references/15-spec-validator.md` |
-| 16 | Generation Brief | 4 | Steps 1–15 | `apps/{app}/generation-briefs/*` | `references/16-generation-brief.md` |
-| 17 | Seed Data Specification | 4 | Steps 1, 9, 13, 16 | `apps/{app}/seed-data.md` | `references/17-seed-data.md` |
-| 18 | Blackbox Test Template | 4 | Step 9 | `blackbox/templates/{app}_test.template.json` | `references/18-blackbox-template.md` |
 
 ---
 
@@ -61,24 +51,9 @@ spec/
 │       ├── archetype.md
 │       ├── domain-refinement.md
 │       ├── role-refinement.md
-│       ├── features/
-│       │   └── {feature_name}.feature.md
-│       ├── ia-spec.md
-│       ├── pages/
-│       │   └── {page_name}.md
-│       ├── state-interaction.md
-│       ├── api-contracts.md
-│       ├── authorization.md
-│       ├── seed-data.md
-│       └── generation-briefs/
-│           ├── _build-order.md
-│           └── {page_name}-brief.md
-└── validation/
-    └── reports/
-        └── {app_name}/
-            ├── gap-report.md
-            ├── contradiction-report.md
-            └── completeness-score.md
+│       └── features/
+│           └── {feature_name}.feature.md
+└── .blueprint-meta.json
 ```
 
 See [Conventions & Folder Structure](references/00-conventions.md) for the full annotated tree, output formatting rules, variable placeholders, file naming conventions, and cross-reference syntax.
@@ -97,7 +72,7 @@ Run the progress checker to understand where the user is in the pipeline. The sc
 python3 {SKILL_DIR}/scripts/check-progress.py --project-dir {project_root}
 ```
 
-Where `{SKILL_DIR}` is the directory containing this skill and `{project_root}` is the user's project directory (the parent of `spec/` and `blackbox/`). If the user's working directory is the project root, `--project-dir .` works.
+Where `{SKILL_DIR}` is the directory containing this skill and `{project_root}` is the user's project directory (the parent of `spec/`). If the user's working directory is the project root, `--project-dir .` works.
 
 If the `./spec` directory does not exist, the user is starting fresh.
 
@@ -155,15 +130,6 @@ A step is considered **complete** when its primary output file(s) exist in `./sp
 | 7 | `apps/{app}/domain-refinement.md` exists |
 | 8 | `apps/{app}/role-refinement.md` exists |
 | 9 | `apps/{app}/features/` has ≥1 `.feature.md` file |
-| 10 | `apps/{app}/ia-spec.md` exists |
-| 11 | `apps/{app}/pages/` has ≥1 `.md` file |
-| 12 | `apps/{app}/state-interaction.md` exists |
-| 13 | `apps/{app}/api-contracts.md` exists |
-| 14 | `apps/{app}/authorization.md` exists |
-| 15 | `validation/reports/{app}/completeness-score.md` exists |
-| 16 | `apps/{app}/generation-briefs/_build-order.md` exists |
-| 17 | `apps/{app}/seed-data.md` exists |
-| 18 | `blackbox/templates/{app}_test.template.json` exists |
 
 ---
 
@@ -175,20 +141,11 @@ A step is considered **complete** when its primary output file(s) exist in `./sp
 | 2 | Define global roles, permissions, and data visibility rules | `references/02-role-permission-matrix.md` | Step 1 |
 | 3 | Establish UI conventions: design tokens, typography, spacing, accessibility | `references/03-ui-conventions.md` | Step 1 |
 | 4 | Design the app shell: navigation, layout, global actions | `references/04-navigation-shell.md` | Steps 1–3 |
-| 5 | Define suite-level API style, auth scheme, and event bus | `references/05-api-event-contracts.md` | Steps 1–2 |
+| 5 | Define suite-level API style, auth scheme, and conventions | `references/05-api-event-contracts.md` | Steps 1–2 |
 | 6 | Classify app archetype and apply default patterns | `references/06-app-archetype.md` | Steps 1–5 |
 | 7 | Refine domain model for app scope: owned vs referenced entities | `references/07-domain-refinement.md` | Steps 1, 6 |
 | 8 | Refine roles and permissions for app scope | `references/08-role-refinement.md` | Steps 2, 6–7 |
 | 9 | Write BDD feature scenarios in Given/When/Then format | `references/09-bdd-features.md` | Steps 6–8 |
-| 10 | Define information architecture: sitemap, URLs, navigation | `references/10-ia-spec.md` | Steps 6–7, 9 |
-| 11 | Specify page layouts, data needs, states, and actions | `references/11-page-patterns.md` | Steps 6, 9–10 |
-| 12 | Design state management, data flow, and interaction patterns | `references/12-state-interaction.md` | Steps 9, 11 |
-| 13 | Define app-level API endpoints, schemas, and events | `references/13-api-contracts.md` | Steps 5, 7, 11, 12 |
-| 14 | Specify authorization policies: routes, APIs, data, UI elements | `references/14-authorization-policy.md` | Steps 8, 10, 13 |
-| 15 | Validate spec consistency and completeness with scoring | `references/15-spec-validator.md` | Steps 1–14 |
-| 16 | Generate per-page briefs with build order for code generation | `references/16-generation-brief.md` | Steps 1–15 |
-| 17 | Define realistic seed data covering all BDD scenarios and roles | `references/17-seed-data.md` | Steps 1, 9, 13, 16 |
-| 18 | Generate machine-readable JSON test template from BDD features | `references/18-blackbox-template.md` | Step 9 |
 
 ---
 
@@ -217,21 +174,41 @@ These steps run **once per app**. They establish the app's identity within the s
 - Focus on what makes this app unique vs. what it inherits
 - The archetype selection (Step 6) drives defaults for all subsequent steps
 
-### Tier 3 — App Specification (Steps 9–14)
+### Tier 3 — BDD Feature Specifications (Step 9)
 
-These steps produce the detailed artifacts for each app. When working on Tier 3:
-- Work iteratively — it's normal to revisit earlier steps as details emerge
-- Steps 9–11 (features, IA, pages) often inform each other
-- Steps 12–13 (state, APIs) build on the page specs
-- Step 14 (authorization) ties everything together
-- For steps that produce multiple files (9, 11), work through them one at a time with the user
+This step produces testable behavior definitions for each app. When working on Tier 3:
+- Read the app's archetype, domain refinement, and role refinement before starting
+- Build a feature inventory first and confirm it with the user before writing scenarios
+- Work through features one at a time with the user
+- Ensure every role from `role-refinement.md` is represented across the feature set
+- Cover happy paths, error scenarios, and edge cases for each feature
+- After generating feature files, run the Gherkin compatibility check:
+  ```bash
+  python3 {SKILL_DIR}/scripts/feature-md-to-gherkin.py --app {app_name} --project-dir {project_root} --validate-only
+  ```
 
-### Tier 4 — Validation & Generation (Steps 15–18)
+---
 
-These steps run **after Tier 3 is complete** for an app. When working on Tier 4:
-- Step 15 uses `{SKILL_DIR}/scripts/validate-spec.py --app {app} --project-dir {project_root}` to automate cross-reference checks
-- Review validation results with the user and fix gaps; a score ≥ 80 is required to proceed
-- Step 16 produces the final generation briefs — these drive the code generation sequence
-- Step 17 produces the seed data specification — ensures generated code can be tested immediately
-- The build order in Step 16 also determines the correct seed insertion order for Step 17
-- Step 18 uses `{SKILL_DIR}/scripts/generate-blackbox-template.py --suite {suite} --project-dir {project_root}` to produce a machine-readable JSON test template — the handoff artifact for the build/test cycle skill
+## Downstream Skills
+
+After completing all 9 steps for all apps in the suite, the specification is ready for downstream processing:
+
+- **webapp-architect** — Takes the blueprint spec and produces technical specification artifacts (information architecture, page patterns, state design, API contracts, authorization policies, generation briefs, and seed data). Run this skill next to complete the technical design.
+- **webapp-prover** — Executes BDD scenarios against a deployed application and manages the build/test/fix cycle. Run this after the architect skill has produced generation briefs and the application has been built.
+
+---
+
+## Blueprint Metadata
+
+On completion of all steps for all apps, the skill writes `.blueprint-meta.json` at the spec root:
+
+```json
+{
+  "version": "1.0",
+  "skill": "webapp-blueprint",
+  "completed_at": "<ISO-8601>",
+  "suite_name": "<suite>",
+  "apps": ["<app1>", "<app2>"],
+  "steps_completed": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+```

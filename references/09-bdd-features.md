@@ -107,6 +107,43 @@ Examples:
   | value_2   | result_2        |
 ```
 
+## Gherkin Compatibility Rules
+
+The `.feature.md` format must be convertible to standard Gherkin `.feature` files with minimal transformation. Follow these rules strictly:
+
+### Step Keyword Formatting
+- Write step keywords as bare text: `Given`, `When`, `Then`, `And`, `But`
+- Do NOT use bold (`**Given**`) or any other markdown formatting on step keywords
+- Each step must start on its own line
+
+### Scenario Descriptions
+- Use a single `>` blockquote line immediately after `### Scenario:` for descriptions
+- Do NOT put prose paragraphs between the scenario heading and its first step
+- Do NOT interleave prose between steps
+
+### Step Phrasing Constraints
+- Steps must be complete, self-contained sentences
+- Parameterized values must use double quotes: `When I enter "admin@test.com" in the email field`
+- Roles must be single words: `Given I am logged in as admin` (not `as an administrator user`)
+- URL paths must be quoted: `When I navigate to "/orders"`
+
+### Forbidden Constructs
+- No markdown links in steps (`[text](url)`)
+- No inline code backticks in steps
+- No bullet lists inside scenarios
+- No nested headings below `###` inside a scenario block
+- No markdown alignment colons in Examples tables (`:---:`)
+
+### Automated Validation
+
+After generating feature files, run the Gherkin compatibility check:
+
+```bash
+python3 {SKILL_DIR}/scripts/feature-md-to-gherkin.py --app {app_name} --project-dir {project_root} --validate-only
+```
+
+This parses each `.feature.md` and reports any lines that would not survive conversion to valid Gherkin.
+
 ## Common Scenario Patterns
 
 Include relevant patterns from this catalog when writing feature files:
@@ -255,3 +292,4 @@ One file per feature. Each file must contain:
 - [ ] Cross-feature dependencies are noted in feature headers where relevant
 - [ ] Edge cases and boundary conditions are covered
 - [ ] All roles from `role-refinement.md` are represented across the feature set
+- [ ] All `.feature.md` files pass `feature-md-to-gherkin.py --validate-only` (no conversion warnings)

@@ -1,6 +1,0 @@
-{
-  "name": "webapp-blueprint-test",
-  "description": "Blackbox BDD test execution for webapp-blueprint suites. Reads the suite test template and manifest, runs every scenario against the deployed app, and writes results for the build agent to consume. Run in a completely separate Claude Code session from the build agent.",
-  "version": "1.0.0",
-  "skills": ["./"]
-}

@@ -1,0 +1,5 @@
+{
+  "name": "webapp-prover",
+  "description": "Deterministic BDD testing and build-test-fix cycle for webapp-blueprint suites",
+  "skills": ["./"]
+}

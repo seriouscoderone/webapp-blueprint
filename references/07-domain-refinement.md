@@ -105,7 +105,7 @@ Entities that exist only within this app's scope.
 {What happens at end-of-life — soft delete, archive, hard delete, retention period}
 
 ### Cross-App Sync
-{If data changes here, what other apps need to know? Reference events from api-event-contracts.md}
+{If data changes here, what other apps need to know? Reference cross-app data dependencies.}
 ```
 
 ## Completion Checklist

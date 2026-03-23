@@ -4,13 +4,13 @@
     "name": "seriouscoderone"
   },
   "metadata": {
-    "description": "Enterprise web application specification, build, and test pipeline — 18-step design process producing a complete /spec folder, plus companion skills for building and BDD-testing the resulting application."
+    "description": "Enterprise web application specification pipeline — 9-step design process producing a complete /spec folder ready for downstream technical specification and code generation."
   },
   "plugins": [
     {
       "name": "webapp-blueprint",
       "source": "./",
-      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 18 sequential design steps — from domain discovery, role matrices, and UI conventions through BDD features, page specs, API definitions, authorization policies, seed data, and blackbox test templates. Produces a complete /spec folder and suite test template ready for code generation. See also: webapp-blueprint-build (implement + fix cycle) and webapp-blueprint-test (BDD scenario execution).",
+      "description": "Comprehensive enterprise web application specification pipeline. Guides users through 9 sequential design steps — from domain discovery, role matrices, and UI conventions through app archetypes, domain refinement, role refinement, and BDD features. Produces a complete /spec folder ready for downstream technical specification and code generation.",
       "version": "1.0.0",
       "strict": false,
       "skills": [
@@ -18,16 +18,16 @@
       ]
     },
     {
-      "name": "webapp-blueprint-build",
-      "source": "./skills/build/",
-      "description": "Build, test, fix, and spec-sync cycle for webapp-blueprint suites. Guides the build agent through deploying from generation briefs, coordinating the test agent, fixing BDD failures sequentially, and syncing spec gaps back to the blueprint.",
+      "name": "webapp-architect",
+      "source": "./skills/architect/",
+      "description": "Technical specification pipeline (Steps 10-17) for webapp-blueprint suites. Takes the domain spec as input and produces information architecture, page patterns, state management, API contracts, authorization policies, validation reports, generation briefs, and seed data specifications.",
       "version": "1.0.0",
       "strict": true
     },
     {
-      "name": "webapp-blueprint-test",
-      "source": "./skills/test/",
-      "description": "Blackbox BDD test execution for webapp-blueprint suites. Reads the suite test template and manifest, runs every scenario against the deployed app, and writes results for the build agent to consume. Run in a completely separate Claude Code session from the build agent.",
+      "name": "webapp-prover",
+      "source": "./skills/prover/",
+      "description": "Deterministic BDD testing and build-test-fix cycle for webapp-blueprint suites. Converts BDD features to executable Playwright tests, runs them deterministically, and orchestrates code fixes for failures. No LLM in the test execution path.",
       "version": "1.0.0",
       "strict": true
     }

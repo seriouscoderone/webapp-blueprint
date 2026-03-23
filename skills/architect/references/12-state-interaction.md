@@ -15,7 +15,7 @@ State & Interaction Design documents how the app manages client-side state, sync
 - `./spec/apps/{app_name}/features/*.feature.md`
 - `./spec/apps/{app_name}/domain-refinement.md`
 - `./spec/apps/{app_name}/archetype.md`
-- `./spec/suite/api-event-contracts.md` (for event-driven patterns)
+- `./spec/suite/api-event-contracts.md` (for suite-wide API conventions)
 
 ## Interrogation Process
 

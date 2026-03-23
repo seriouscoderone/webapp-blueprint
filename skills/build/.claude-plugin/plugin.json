@@ -1,6 +1,0 @@
-{
-  "name": "webapp-blueprint-build",
-  "description": "Build, test, fix, and spec-sync cycle for webapp-blueprint suites. Guides the build agent through deploying from generation briefs, coordinating the test agent, fixing BDD failures sequentially, and syncing spec gaps back to the blueprint.",
-  "version": "1.0.0",
-  "skills": ["./"]
-}
