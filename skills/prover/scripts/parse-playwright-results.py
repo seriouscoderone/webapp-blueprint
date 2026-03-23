@@ -139,11 +139,13 @@ def extract_scenarios(results: dict[str, Any]) -> list[dict[str, Any]]:
 
                         # Capture error from first failure
                         if mapped in ("FAILED", "ERROR") and error_msg is None:
-                            err = result.get("error", {})
-                            if isinstance(err, dict):
-                                error_msg = err.get("message", str(err))
-                            elif isinstance(err, str):
-                                error_msg = err
+                            errors = result.get("errors", [])
+                            if errors:
+                                first_err = errors[0]
+                                if isinstance(first_err, dict):
+                                    error_msg = first_err.get("message", str(first_err))
+                                elif isinstance(first_err, str):
+                                    error_msg = first_err
 
                         # Capture trace path
                         for att in result.get("attachments", []):
