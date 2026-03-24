@@ -18,6 +18,20 @@ The pipeline is designed for **enterprise application suites** — collections o
 
 ---
 
+## Environment
+
+This skill requires **Python 3** for its progress-checking script. Verify before proceeding:
+
+```bash
+python3 --version
+```
+
+If missing, tell the user to install Python 3 from https://python.org or via their package manager.
+
+No other dependencies are needed — this skill only produces markdown files.
+
+---
+
 ## Pipeline at a Glance
 
 | Step | Name | Tier | Reads From | Writes To | Reference |

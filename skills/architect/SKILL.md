@@ -17,7 +17,19 @@ The pipeline is organized into **2 tiers**:
 
 ## Prerequisites
 
-Before starting, verify that the domain spec (Steps 1-9) is complete:
+### Environment
+
+This skill requires **Python 3** for its progress-checking and validation scripts. Verify before proceeding:
+
+```bash
+python3 --version
+```
+
+If missing, tell the user to install Python 3 from https://python.org or via their package manager.
+
+### Spec prerequisites
+
+Verify that the domain spec (Steps 1-9) is complete:
 
 1. `.blueprint-meta.json` exists at the spec root and shows all 9 steps completed
 2. `spec/suite/domain-model.md` exists

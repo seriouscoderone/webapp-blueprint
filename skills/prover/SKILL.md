@@ -29,9 +29,28 @@ Before running this skill, verify:
 2. **`.feature.md` files exist** under `spec/apps/{app}/features/`
 3. **`spec/apps/{app}/pages/*.md` exist** — page pattern specs (needed for page objects)
 4. **`spec/apps/{app}/api-contracts.md` exists** — API contract definitions (needed for API helpers)
-5. **Node.js installed** — `playwright-bdd` and `@playwright/test` available (or will be installed)
 
-If prerequisites are not met, tell the user:
+### Environment checks
+
+Run these checks before proceeding — if any fail, stop and tell the user what to install:
+
+```bash
+# Node.js (required — cannot be installed by the agent)
+node --version    # must be v18+
+
+# Python 3 (required for parse-playwright-results.py)
+python3 --version
+```
+
+If Node.js is missing, tell the user:
+
+> **Node.js v18+ is required.** Install it from https://nodejs.org or via your package manager (`brew install node`, `nvm install 18`, etc.) and re-run this skill.
+
+The agent handles all npm package installation (`playwright-bdd`, `@playwright/test`, browser binaries) — the user only needs Node.js itself.
+
+### Spec prerequisites
+
+If `.architect-meta.json` is missing or spec files don't exist, tell the user:
 
 > Run `webapp-blueprint` (Steps 1-9) and `webapp-architect` (Steps 10-17) first.
 
