@@ -17,6 +17,113 @@ Read these spec files to inform implementation:
 
 ---
 
+## Test Data Dictionary Resolution
+
+Before implementing step definitions, check for `spec/apps/{app}/test-data-dictionary.json`. If it exists, use it to resolve placeholder tokens in feature files to canonical seed values.
+
+### How Resolution Works
+
+Feature files use placeholder tokens like `"{ADMIN_USER}"` or `"{DRAFT_ORDER}"`. The dictionary maps these to actual seed data values:
+
+```json
+{
+  "entities": {
+    "UserAccount": [
+      {
+        "placeholder": "ADMIN_USER",
+        "display_name": "Emily Worthington",
+        "role": "admin",
+        "key_fields": { "email": "admin@example.org" }
+      }
+    ]
+  }
+}
+```
+
+### Create a Resolution Helper
+
+At the start of Phase 2, create a helper that step definitions can import:
+
+```typescript
+// tests/support/test-data.ts
+import dictionary from '../../spec/apps/{app}/test-data-dictionary.json';
+
+type EntityEntry = {
+  seed_id: string;
+  placeholder: string;
+  display_name: string;
+  aliases: string[];
+  role?: string;
+  status?: string;
+  key_fields: Record<string, unknown>;
+};
+
+const allEntries: EntityEntry[] = Object.values(dictionary.entities).flat();
+
+/**
+ * Resolve a placeholder token or pass through literal values.
+ * "{ADMIN_USER}" → "Emily Worthington"
+ * "some literal"  → "some literal"
+ */
+export function resolve(value: string): string {
+  // Check if it's a placeholder token (SCREAMING_SNAKE in braces)
+  const match = value.match(/^\{([A-Z][A-Z0-9_]+)\}$/);
+  if (!match) return value; // literal value, pass through
+
+  const token = match[1];
+  const entry = allEntries.find(e => e.placeholder === token);
+  if (!entry) {
+    throw new Error(
+      `Unresolved placeholder: {${token}}. Add it to test-data-dictionary.json`
+    );
+  }
+  return entry.display_name;
+}
+
+/** Look up an entry by placeholder token for accessing key_fields */
+export function lookup(token: string): EntityEntry {
+  const entry = allEntries.find(e => e.placeholder === token);
+  if (!entry) throw new Error(`Unknown token: ${token}`);
+  return entry;
+}
+```
+
+### Use in Step Definitions
+
+```typescript
+import { resolve } from '../support/test-data';
+
+Given('a ClassOffering {string} exists', async ({ page }, nameOrToken: string) => {
+  const name = resolve(nameOrToken); // "{PUBLISHED_CLASS}" → "Elective – Watercolor Art"
+  // ... assert or navigate using the resolved name
+});
+
+When('I search for {string} in the mentor search field', async ({ page }, nameOrToken: string) => {
+  const name = resolve(nameOrToken); // "{MENTOR_USER}" → "Maria Reyes"
+  await page.getByPlaceholder(/search/i).fill(name);
+});
+```
+
+### Pre-flight Validation
+
+Before starting Phase 3, validate that all placeholders resolve:
+
+```bash
+# Scan .feature files for placeholder tokens and check each against the dictionary
+grep -ohP '"\{[A-Z][A-Z0-9_]+\}"' tests/features/**/*.feature | sort -u
+```
+
+Compare with the dictionary entries. Any unresolved tokens will cause test failures.
+
+### If No Dictionary Exists
+
+If `test-data-dictionary.json` is not available:
+- Skip the resolution helper
+- Use literal values in step definitions
+- Accept that name mismatches will occur and must be fixed during Phase 3
+
+---
+
 ## Locator Strategy
 
 Use this hierarchy — prefer the most accessible option:

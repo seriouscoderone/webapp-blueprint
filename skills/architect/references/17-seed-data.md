@@ -157,6 +157,95 @@ Seed entities in this order to satisfy foreign key and relationship constraints:
 - Known limitations or manual steps required}
 ```
 
+## Test Data Dictionary
+
+After writing the seed data specification, emit a machine-readable dictionary that maps BDD placeholder tokens to canonical seed values. This bridges the gap between feature files (written by webapp-blueprint) and seed data (written here).
+
+### Output: `./spec/apps/{app_name}/test-data-dictionary.json`
+
+```json
+{
+  "version": "1.0",
+  "generated_by": "webapp-architect",
+  "app": "{app_name}",
+  "entities": {
+    "{EntityName}": [
+      {
+        "seed_id": "{camelCase identifier matching the seed script variable}",
+        "placeholder": "{SCREAMING_SNAKE_TOKEN from .feature.md files}",
+        "display_name": "{exact string the UI will render}",
+        "aliases": ["{short name}", "{alternate reference}"],
+        "role": "{role name, for user entities}",
+        "status": "{entity status/state}",
+        "key_fields": {
+          "{field}": "{value}"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Example
+
+```json
+{
+  "version": "1.0",
+  "generated_by": "webapp-architect",
+  "app": "sla-portal",
+  "entities": {
+    "ClassOffering": [
+      {
+        "seed_id": "classElectiveArt",
+        "placeholder": "PUBLISHED_CLASS",
+        "display_name": "Elective – Watercolor Art",
+        "aliases": ["Art Class", "Watercolor"],
+        "status": "published",
+        "key_fields": { "room": "Piano Room", "capacity": 10, "enrolled": 7 }
+      },
+      {
+        "seed_id": "classTentative",
+        "placeholder": "DRAFT_CLASS",
+        "display_name": "Elective – Photography (TBD)",
+        "aliases": ["Photography"],
+        "status": "tentative",
+        "key_fields": { "capacity": 10, "enrolled": 0 }
+      }
+    ],
+    "UserAccount": [
+      {
+        "seed_id": "userAdmin",
+        "placeholder": "ADMIN_USER",
+        "display_name": "Emily Worthington",
+        "aliases": ["Admin"],
+        "role": "admin",
+        "key_fields": { "email": "admin@example.org" }
+      },
+      {
+        "seed_id": "userMentor",
+        "placeholder": "MENTOR_USER",
+        "display_name": "Maria Reyes",
+        "aliases": ["Mentor"],
+        "role": "mentor",
+        "key_fields": { "email": "mentor@example.org" }
+      }
+    ]
+  }
+}
+```
+
+### How to Build the Dictionary
+
+1. **Scan all `.feature.md` files** for placeholder tokens (pattern: `"{SCREAMING_SNAKE}"`)
+2. **Map each token** to a seed record from the seed data specification
+3. **Set `display_name`** to the exact string the app will render (this is what the prover will assert against)
+4. **Set `aliases`** to shorter or alternate names that might appear in feature steps
+5. **Include `key_fields`** that are referenced in Given/When/Then steps (status, role, counts, etc.)
+
+If a placeholder in a feature file has no matching seed record, flag it as a gap and add the missing record to the seed data specification.
+
+---
+
 ## Completion Checklist
 - [ ] Target app selected and all prerequisite files confirmed present
 - [ ] BDD features loaded and all scenario data requirements mapped
@@ -168,3 +257,5 @@ Seed entities in this order to satisfy foreign key and relationship constraints:
 - [ ] Relational dependency order documented
 - [ ] Seed format and tooling confirmed
 - [ ] Output file written to `./spec/apps/{app_name}/seed-data.md`
+- [ ] Test data dictionary written to `./spec/apps/{app_name}/test-data-dictionary.json`
+- [ ] Every placeholder token in `.feature.md` files has a matching dictionary entry

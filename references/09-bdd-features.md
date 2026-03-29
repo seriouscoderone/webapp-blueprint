@@ -144,6 +144,52 @@ python3 {SKILL_DIR}/scripts/feature-md-to-gherkin.py --app {app_name} --project-
 
 This parses each `.feature.md` and reports any lines that would not survive conversion to valid Gherkin.
 
+## Test Data Placeholders
+
+When writing BDD scenarios, use **placeholder tokens** instead of hypothetical entity names for data that will be defined by the seed data specification (Step 17). This prevents name mismatches between feature files and seed data that cause false test failures.
+
+### Syntax
+
+Placeholders use uppercase names inside curly braces, within double-quoted Gherkin strings:
+
+```
+Given a ClassOffering "{PUBLISHED_CLASS}" exists with status "published"
+When I open "{PUBLISHED_CLASS}" in the class detail view
+And I search for "{MENTOR_USER}" in the mentor search field
+Then I see "{MENTOR_USER}" assigned to "{PUBLISHED_CLASS}"
+```
+
+### Naming Conventions
+
+| Pattern | Example | Resolves To |
+|---------|---------|-------------|
+| `{ENTITY_VARIANT}` | `{DRAFT_ORDER}` | The seed record for an order in draft state |
+| `{ROLE_USER}` | `{ADMIN_USER}` | The seed user with the admin role |
+| `{ENTITY_LIST}` | `{ACTIVE_CLASSES}` | A list context (for count assertions, not a single name) |
+
+Rules:
+- Use SCREAMING_SNAKE_CASE
+- Prefix with the entity type or role
+- Suffix with the variant or state
+- Keep tokens self-descriptive — `{PENDING_CLAIM}` not `{CLAIM_1}`
+
+### When to Use Placeholders vs. Literal Values
+
+| Use Placeholder | Use Literal |
+|-----------------|-------------|
+| Entity names, titles, display names | Status values (`"draft"`, `"published"`) |
+| Person names (users, contacts) | Role names (`"admin"`, `"mentor"`) |
+| Any value that comes from seed data | URL paths, UI labels, error messages |
+| Search terms that must match seed records | Counts, boolean flags |
+
+### Resolution
+
+Placeholders are resolved by the prover (webapp-prover Phase 2) using the **test data dictionary** (`spec/apps/{app}/test-data-dictionary.json`), which is produced by the architect (Step 17). The prover maps each token to the canonical seed value before writing step definitions.
+
+If no test data dictionary exists yet (because the architect hasn't run), the feature files are still valid Gherkin — the placeholder tokens are just strings that will be resolved later.
+
+---
+
 ## Common Scenario Patterns
 
 Include relevant patterns from this catalog when writing feature files:
@@ -292,4 +338,5 @@ One file per feature. Each file must contain:
 - [ ] Cross-feature dependencies are noted in feature headers where relevant
 - [ ] Edge cases and boundary conditions are covered
 - [ ] All roles from `role-refinement.md` are represented across the feature set
+- [ ] Entity names in scenarios use placeholder tokens (`{DRAFT_ORDER}`, `{ADMIN_USER}`) instead of hypothetical names
 - [ ] All `.feature.md` files pass `feature-md-to-gherkin.py --validate-only` (no conversion warnings)

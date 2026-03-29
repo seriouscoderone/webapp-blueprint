@@ -138,6 +138,32 @@ Or read the screenshot to understand the visual state.
 
 ---
 
+## Dictionary-Aware Failure Analysis
+
+Before applying fixes, check if a failure is caused by a **data name mismatch** rather than an app bug.
+
+### Detection Pattern
+
+If a test fails with:
+- `expect(locator).toBeVisible()` — element with specific text not found
+- `expect(locator).toHaveText()` — text content doesn't match
+- Timeout waiting for element with a specific name/title
+
+And the expected text matches a placeholder token or seed value from `test-data-dictionary.json`, the failure is a **data mismatch**, not an app code bug.
+
+### Resolution
+
+1. **Read `test-data-dictionary.json`** — look up the expected value
+2. **Check if the step definition uses `resolve()`** — if not, the placeholder was passed as a literal string
+3. **Fix the step definition** to call `resolve()` — this is an exception to the "step definitions are immutable" rule. Dictionary resolution fixes are allowed because they are correcting the test infrastructure, not changing test behavior.
+4. **If the value isn't in the dictionary** — check if the seed data has the entity. If it does but with a different name, update the dictionary. If it doesn't, add the missing seed record.
+
+### Priority
+
+Always check for data mismatches BEFORE attempting app code fixes. A data mismatch produces the same symptoms as a missing UI element (timeout, not visible), but the fix is in the test data layer, not the app.
+
+---
+
 ## Fix Protocol
 
 ### What to Fix
@@ -153,10 +179,11 @@ Or read the screenshot to understand the visual state.
 ### What NEVER to Fix
 
 - `.feature` files — IMMUTABLE
-- Step definition files — IMMUTABLE after Phase 2
+- Step definition files — IMMUTABLE after Phase 2 (exception: adding `resolve()` calls for dictionary tokens)
 - Page object files — IMMUTABLE after Phase 1
 - Playwright configuration — IMMUTABLE after Phase 1
 - Test fixtures — IMMUTABLE after Phase 1
+- `test-data-dictionary.json` — can be updated to add missing entries or fix `display_name` values
 
 ### Fix Process
 

@@ -54,6 +54,16 @@ If `.architect-meta.json` is missing or spec files don't exist, tell the user:
 
 > Run `webapp-blueprint` (Steps 1-9) and `webapp-architect` (Steps 10-17) first.
 
+### Test data dictionary (recommended)
+
+Check for `spec/apps/{app}/test-data-dictionary.json`. This file maps BDD placeholder tokens (e.g., `{ADMIN_USER}`) to canonical seed values (e.g., `"Emily Worthington"`). It is produced by the architect in Step 17.
+
+If the dictionary is missing, warn the user:
+
+> **Warning:** No test-data-dictionary.json found. Feature files may contain placeholder tokens that cannot be resolved. Run webapp-architect Step 17 to generate the dictionary, or be prepared to manually map entity names during Phase 2.
+
+The prover works without the dictionary (placeholder tokens become literal strings) but test failures from name mismatches are likely.
+
 ---
 
 ## Phase 1 — Test Harness Generation
